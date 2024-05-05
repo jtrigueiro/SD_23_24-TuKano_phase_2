@@ -1,7 +1,5 @@
 package tukano.api.java;
 
-import java.util.function.Function;
-
 /**
  * 
  * Represents the result of an operation, either wrapping a result of the given type,
@@ -67,42 +65,6 @@ public interface Result<T> {
 	 */
 	static <T> Result<T> error(ErrorCode error) {
 		return new ErrorResult<>(error);		
-	}
-	
-	
-	static <T> Result<T> errorOrValue( Result<?> res,  T val) {
-		if( res.isOK() )
-			return ok( val );
-		else
-			return error( res.error() );
-	}
-	
-	static <T> Result<T> errorOrValue( Result<?> res,  Result<T> other) {
-		if( res.isOK() )			
-			return other;
-		else
-			return error( res.error() );
-	}
-	
-	static Result<Void> errorOrVoid( Result<?> res,  Result<?> other) {
-		if( res.isOK() )			
-			return other.isOK() ? ok() : error( other.error() );
-		else
-			return error( res.error() );
-	}
-	
-	static <T,Q> Result<Q> errorOrResult( Result<T> a, Function<T, Result<Q>> b) {
-		if( a.isOK())
-			return b.apply(a.value());
-		else
-			return error( a.error() );
-	}
-	
-	static <T,Q> Result<Q> errorOrValue( Result<T> a, Function<T, Q> b) {
-		if( a.isOK())
-			return ok(b.apply(a.value()));
-		else
-			return error( a.error() );
 	}
 }
 

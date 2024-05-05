@@ -6,15 +6,15 @@ option java_outer_classname = "UsersProtoBuf";
 
 service Users {
 
-	rpc createUser( CreateUserArgs ) returns (CreateUserResult) {}
+	rpc createUser( CreateUserArgs ) returns ( CreateUserResult ) {}
 
-	rpc getUser( GetUserArgs) returns (GetUserResult){}
+	rpc getUser( GetUserArgs ) returns ( GetUserResult ){}
 
-	rpc updateUser( UpdateUserArgs) returns (UpdateUserResult){}
+	rpc updateUser( UpdateUserArgs ) returns ( UpdateUserResult ){}
 
-	rpc deleteUser( DeleteUserArgs) returns (DeleteUserResult){}
+	rpc deleteUser( DeleteUserArgs ) returns ( DeleteUserResult ){}
 
-	rpc searchUsers( SearchUserArgs) returns (stream GrpcUser){}
+	rpc searchUsers( SearchUserArgs ) returns ( stream GrpcUser ){}
 
 }
 
