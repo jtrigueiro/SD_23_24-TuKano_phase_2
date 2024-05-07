@@ -25,7 +25,7 @@ import tukano.clients.ClientFactory;
 public class BlobServer implements Blobs {
     private static final String apiKey = "b994yeq62paqye8";
     private static final String apiSecret = "8w3xrdm9bzh6veo";
-    private static final String accessTokenStr = "sl.B0l8qlyGVoSbPRC8r_Lk036EvPesG76ChO_j-S-fJmfeUuiat5ZVE1O4t5H4EfRbQCMxBB4Y7J_7ZrzU2U-0vS-PAK6GaOFWUg0GLjOAS8yN9hYz-_55ADdq4WxnTSxgRZbrGOEaLh6m";
+    private static final String accessTokenStr = "sl.B0zFsy4IDwnv8vSfPN2NyYwQRs-CZEBgdi8dL5ZAM4Y8agok89v12G72tnGDL9rdiK8wSX7erKuJA5BeJLQMvstHPdcY2sdE1ukVnpgm9MliKjElwaNIRFq8PpfevFt_LAOhvV-aJccG";
 
     private static final String DELETE_FILE_V2_URL = "https://api.dropboxapi.com/2/files/delete_v2";
     private static final String UPLOAD_FILE_URL = "https://content.dropboxapi.com/2/files/upload";
@@ -35,9 +35,7 @@ public class BlobServer implements Blobs {
     private static final String CONTENT_TYPE_HDR = "Content-Type";
     private static final String JSON_CONTENT_TYPE = "application/json; charset=utf-8";
     private static final String OCTET_STREAM_CONTENT_TYPE = "application/octet-stream";
-    private static final String DROPBOX_API_ARG_HDR = "Dropbox-API-Arg:";
-    private static final String DROPBOX_API_ARG_DOWNLOAD_PATH_BUILDER_HDR = "{\"path\": \"/%s\"}";
-    private static final String DROPBOX_API_ARG_UPLOAD_PATH_BUILDER_HDR = "{\"autorename\": false,\"mode\": \"add\",\"mute\": false,\"path\": \"/%s\",\"strict_conflict\": false}";
+    private static final String DROPBOX_API_ARG_HDR = "Dropbox-API-Arg";
 
     private final Gson json;
     private final OAuth20Service service;
@@ -118,7 +116,8 @@ public class BlobServer implements Blobs {
             }
         } else {
             var uploadFile = new OAuthRequest(Verb.POST, UPLOAD_FILE_URL);
-            uploadFile.addHeader(DROPBOX_API_ARG_HDR, String.format(DROPBOX_API_ARG_UPLOAD_PATH_BUILDER_HDR, blobId));
+            uploadFile.addHeader(DROPBOX_API_ARG_HDR,
+                    json.toJson(new UploadFileArgs(false, "add", false, "/" + blobId, false)));
             uploadFile.addHeader(CONTENT_TYPE_HDR, OCTET_STREAM_CONTENT_TYPE);
 
             uploadFile.setPayload(bytes);
@@ -127,8 +126,8 @@ public class BlobServer implements Blobs {
 
             try {
                 Response r = service.execute(uploadFile);
-                if (r.getCode() != HTTP_SUCCESS)
-                    return Result.error(Result.ErrorCode.NOT_FOUND);
+                if (r.getCode() != HTTP_SUCCESS)// falhas na ligacao com a dropbox rebentam aqui?
+                    return Result.error(Result.ErrorCode.CONFLICT);
             } catch (Exception e) {
                 return Result.error(Result.ErrorCode.CONFLICT);
             }
@@ -155,9 +154,8 @@ public class BlobServer implements Blobs {
         // return Result.error(Result.ErrorCode.NOT_FOUND);
 
         var downloadFile = new OAuthRequest(Verb.POST, DOWNLOAD_FILE_URL);
-        downloadFile.addHeader(DROPBOX_API_ARG_HDR, String.format(DROPBOX_API_ARG_DOWNLOAD_PATH_BUILDER_HDR, blobId));
-
-        // downloadFile.setPayload(json.toJson(new DownloadFileArgs(blobId)));
+        downloadFile.addHeader(DROPBOX_API_ARG_HDR, json.toJson(new DownloadFileArgs("/" + blobId)));
+        downloadFile.addHeader(CONTENT_TYPE_HDR, OCTET_STREAM_CONTENT_TYPE);
 
         service.signRequest(accessToken, downloadFile);
 
@@ -190,7 +188,7 @@ public class BlobServer implements Blobs {
         var deleteFile = new OAuthRequest(Verb.POST, DELETE_FILE_V2_URL);
         deleteFile.addHeader(CONTENT_TYPE_HDR, JSON_CONTENT_TYPE);
 
-        deleteFile.setPayload(json.toJson(new DeleteFileV2Args(blobId)));
+        deleteFile.setPayload(json.toJson(new DeleteFileV2Args("/" + blobId)));
 
         service.signRequest(accessToken, deleteFile);
 
