@@ -5,7 +5,7 @@ import java.net.InetAddress;
 
 import org.glassfish.jersey.server.ResourceConfig;
 import org.glassfish.jersey.jdkhttp.JdkHttpServerFactory;
-
+import javax.net.ssl.SSLContext;
 import tukano.utils.Discovery;
 
 public class RestShortsServer {
@@ -16,27 +16,25 @@ public class RestShortsServer {
 
 	public static final int PORT = 8080;
 	public static final String SERVICE = "shorts";
-	private static final String SERVER_URI_FMT = "http://%s:%s/rest";
+	private static final String SERVER_URI_FMT = "https://%s:%s/rest";
 
 	public static void main(String[] args) {
-		
+
 		try {
 
 			ResourceConfig config = new ResourceConfig();
-			config.register(  RestShortsResource.class );
-			
+			config.register(RestShortsResource.class);
+
 			String ip = InetAddress.getLocalHost().getHostAddress();
 			String serverURI = String.format(SERVER_URI_FMT, ip, PORT);
-			JdkHttpServerFactory.createHttpServer(URI.create(serverURI), config);	
-			
+			JdkHttpServerFactory.createHttpServer(URI.create(serverURI), config, SSLContext.getDefault());
+
 			Discovery discovery = Discovery.getInstance();
 			discovery.announce(SERVICE, serverURI.toString());
 
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		
-		
+
 	}
 }
-	

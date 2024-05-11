@@ -1,10 +1,15 @@
 package tukano.clients.grpc;
 
+import java.io.FileInputStream;
 import java.net.URI;
+import java.security.KeyStore;
 import java.util.List;
 
-import io.grpc.ManagedChannelBuilder;
+import javax.net.ssl.TrustManagerFactory;
 
+import io.grpc.netty.GrpcSslContexts;
+import io.grpc.netty.NettyChannelBuilder;
+import io.netty.handler.ssl.SslContextBuilder;
 import tukano.api.Short;
 import tukano.api.java.Result;
 import tukano.api.java.Shorts;
@@ -18,8 +23,29 @@ public class GrpcShortsClient extends GrpcClient implements Shorts {
     final ShortsBlockingStub stub;
 
     public GrpcShortsClient(URI serverURI) {
-        var channel = ManagedChannelBuilder.forAddress(serverURI.getHost(), serverURI.getPort()).usePlaintext().build();
-        stub = ShortsGrpc.newBlockingStub(channel);
+        try {
+            var trustStore = System.getProperty("javax.net.ssl.trustStore");
+            var trustStorePassword = System.getProperty("javax.net.ssl.trustStorePassword");
+
+            var keystore = KeyStore.getInstance(KeyStore.getDefaultType());
+            try (var in = new FileInputStream(trustStore)) {
+                keystore.load(in, trustStorePassword.toCharArray());
+            }
+
+            var trustManagerFactory = TrustManagerFactory.getInstance(TrustManagerFactory.getDefaultAlgorithm());
+            trustManagerFactory.init(keystore);
+
+            var sslContext = GrpcSslContexts.configure(SslContextBuilder.forClient().trustManager(trustManagerFactory))
+                    .build();
+
+            var channel = NettyChannelBuilder.forAddress(serverURI.getHost(), serverURI.getPort())
+                    .sslContext(sslContext).build();
+
+            stub = ShortsGrpc.newBlockingStub(channel);
+        } catch (Exception x) {
+            x.printStackTrace();
+            throw new RuntimeException(x);
+        }
     }
 
     @Override
@@ -28,18 +54,17 @@ public class GrpcShortsClient extends GrpcClient implements Shorts {
             stub.deleteUserShorts(DeleteUserShortsArgs.newBuilder()
                     .setUserId(userId)
                     .build());
-                return null;
+            return null;
         });
     }
 
-    
     @Override
     public Result<Void> checkBlobId(String blobId) {
         return toJavaResult(() -> {
             stub.checkBlobId(CheckBlobIdArgs.newBuilder()
                     .setBlobId(blobId)
                     .build());
-                return null;
+            return null;
         });
     }
 
@@ -98,5 +123,5 @@ public class GrpcShortsClient extends GrpcClient implements Shorts {
         // TODO Auto-generated method stub
         throw new UnsupportedOperationException("Unimplemented method 'getFeed'");
     }
-    
+
 }
