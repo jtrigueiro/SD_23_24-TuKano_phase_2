@@ -13,6 +13,8 @@ import com.github.scribejava.core.model.Response;
 import com.github.scribejava.core.model.Verb;
 import com.github.scribejava.core.oauth.OAuth20Service;
 import com.google.gson.Gson;
+
+import tukano.utils.dropbox.msgs.CreateFolderV2Args;
 import tukano.utils.dropbox.msgs.DeleteFileV2Args;
 import tukano.utils.dropbox.msgs.DownloadFileArgs;
 import tukano.utils.dropbox.msgs.UploadFileArgs;
@@ -30,6 +32,7 @@ public class BlobServer implements Blobs {
     private static final String DELETE_FILE_V2_URL = "https://api.dropboxapi.com/2/files/delete_v2";
     private static final String UPLOAD_FILE_URL = "https://content.dropboxapi.com/2/files/upload";
     private static final String DOWNLOAD_FILE_URL = "https://content.dropboxapi.com/2/files/download";
+    private static final String CREATE_FOLDER_V2_URL = "https://api.dropboxapi.com/2/files/create_folder_v2";
 
     private static final int HTTP_SUCCESS = 200;
     private static final String CONTENT_TYPE_HDR = "Content-Type";
@@ -37,16 +40,20 @@ public class BlobServer implements Blobs {
     private static final String OCTET_STREAM_CONTENT_TYPE = "application/octet-stream";
     private static final String DROPBOX_API_ARG_HDR = "Dropbox-API-Arg";
 
+    private static final String ROOT_FOLDER = "/blobs";
+
     private final Gson json;
     private final OAuth20Service service;
     private final OAuth2AccessToken accessToken;
 
     // private final Path storagePath;
 
-    public BlobServer() {
+    public BlobServer(Boolean cleanState) {
         json = new Gson();
         accessToken = new OAuth2AccessToken(accessTokenStr);
         service = new ServiceBuilder(apiKey).apiSecret(apiSecret).build(DropboxApi20.INSTANCE);
+
+        createFolder(ROOT_FOLDER);
 
         // storagePath = Paths.get("src/tukano/servers/java/blobs");
 
@@ -117,7 +124,7 @@ public class BlobServer implements Blobs {
         } else {
             var uploadFile = new OAuthRequest(Verb.POST, UPLOAD_FILE_URL);
             uploadFile.addHeader(DROPBOX_API_ARG_HDR,
-                    json.toJson(new UploadFileArgs(false, "add", false, "/" + blobId, false)));
+                    json.toJson(new UploadFileArgs(false, "add", false, ROOT_FOLDER + "/" + blobId, false)));
             uploadFile.addHeader(CONTENT_TYPE_HDR, OCTET_STREAM_CONTENT_TYPE);
 
             uploadFile.setPayload(bytes);
@@ -154,7 +161,7 @@ public class BlobServer implements Blobs {
         // return Result.error(Result.ErrorCode.NOT_FOUND);
 
         var downloadFile = new OAuthRequest(Verb.POST, DOWNLOAD_FILE_URL);
-        downloadFile.addHeader(DROPBOX_API_ARG_HDR, json.toJson(new DownloadFileArgs("/" + blobId)));
+        downloadFile.addHeader(DROPBOX_API_ARG_HDR, json.toJson(new DownloadFileArgs(ROOT_FOLDER + "/" + blobId)));
         downloadFile.addHeader(CONTENT_TYPE_HDR, OCTET_STREAM_CONTENT_TYPE);
 
         service.signRequest(accessToken, downloadFile);
@@ -188,7 +195,7 @@ public class BlobServer implements Blobs {
         var deleteFile = new OAuthRequest(Verb.POST, DELETE_FILE_V2_URL);
         deleteFile.addHeader(CONTENT_TYPE_HDR, JSON_CONTENT_TYPE);
 
-        deleteFile.setPayload(json.toJson(new DeleteFileV2Args("/" + blobId)));
+        deleteFile.setPayload(json.toJson(new DeleteFileV2Args(ROOT_FOLDER + "/" + blobId)));
 
         service.signRequest(accessToken, deleteFile);
 
@@ -203,4 +210,17 @@ public class BlobServer implements Blobs {
         return Result.ok();
     }
 
+    public void createFolder(String folderDir) {
+        var createFolder = new OAuthRequest(Verb.POST, CREATE_FOLDER_V2_URL);
+        createFolder.addHeader(CONTENT_TYPE_HDR, JSON_CONTENT_TYPE);
+
+        createFolder.setPayload(json.toJson(new CreateFolderV2Args(folderDir, false)));
+
+        service.signRequest(accessToken, createFolder);
+
+        try {
+            service.execute(createFolder);
+        } catch (Exception e) {
+        }
+    }
 }

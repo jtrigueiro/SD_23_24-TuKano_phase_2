@@ -11,8 +11,8 @@ public class RestBlobsResource extends RestResource implements RestBlobs {
 
     final Blobs impl;
 
-    public RestBlobsResource() {
-        this.impl = new BlobServer();
+    public RestBlobsResource(Boolean cleanState) {
+        this.impl = new BlobServer(cleanState);
     }
 
     @Override
