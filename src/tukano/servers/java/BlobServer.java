@@ -52,7 +52,8 @@ public class BlobServer implements Blobs {
         json = new Gson();
         accessToken = new OAuth2AccessToken(accessTokenStr);
         service = new ServiceBuilder(apiKey).apiSecret(apiSecret).build(DropboxApi20.INSTANCE);
-
+        if (cleanState)
+            deleteFolder(ROOT_FOLDER);
         createFolder(ROOT_FOLDER);
 
         // storagePath = Paths.get("src/tukano/servers/java/blobs");
@@ -220,6 +221,20 @@ public class BlobServer implements Blobs {
 
         try {
             service.execute(createFolder);
+        } catch (Exception e) {
+        }
+    }
+
+    public void deleteFolder(String folderDir) {
+        var deleteFolder = new OAuthRequest(Verb.POST, DELETE_FILE_V2_URL);
+        deleteFolder.addHeader(CONTENT_TYPE_HDR, JSON_CONTENT_TYPE);
+
+        deleteFolder.setPayload(json.toJson(new DeleteFileV2Args(folderDir)));
+
+        service.signRequest(accessToken, deleteFolder);
+
+        try {
+            service.execute(deleteFolder);
         } catch (Exception e) {
         }
     }
