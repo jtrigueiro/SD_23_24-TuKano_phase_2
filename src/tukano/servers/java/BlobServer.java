@@ -27,7 +27,7 @@ import tukano.clients.ClientFactory;
 public class BlobServer implements Blobs {
     private static final String apiKey = "b994yeq62paqye8";
     private static final String apiSecret = "8w3xrdm9bzh6veo";
-    private static final String accessTokenStr = "sl.B0zFsy4IDwnv8vSfPN2NyYwQRs-CZEBgdi8dL5ZAM4Y8agok89v12G72tnGDL9rdiK8wSX7erKuJA5BeJLQMvstHPdcY2sdE1ukVnpgm9MliKjElwaNIRFq8PpfevFt_LAOhvV-aJccG";
+    private static final String accessTokenStr = "sl.B1GzikffWao3zeAZuddqJBeahEUkGWhdmam7UQWXHeJOYhL4GHJUKGsm52Wec9EZuULjNyK2pTEiO5zJWUF27QbXqtSponUUKv9eaZUaEW3b8Mo38yOF7Ry2Rqa5f4_FVBF3fdVTbvrK";
 
     private static final String DELETE_FILE_V2_URL = "https://api.dropboxapi.com/2/files/delete_v2";
     private static final String UPLOAD_FILE_URL = "https://content.dropboxapi.com/2/files/upload";
@@ -52,8 +52,8 @@ public class BlobServer implements Blobs {
         json = new Gson();
         accessToken = new OAuth2AccessToken(accessTokenStr);
         service = new ServiceBuilder(apiKey).apiSecret(apiSecret).build(DropboxApi20.INSTANCE);
-        if (cleanState)
-            deleteFolder(ROOT_FOLDER);
+        // if (cleanState)
+        // deleteFolder(ROOT_FOLDER);
         createFolder(ROOT_FOLDER);
 
         // storagePath = Paths.get("src/tukano/servers/java/blobs");

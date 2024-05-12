@@ -25,7 +25,7 @@ public class RestShortsServer {
 			ResourceConfig config = new ResourceConfig();
 			config.register(RestShortsResource.class);
 
-			String ip = InetAddress.getLocalHost().getHostAddress();
+			String ip = InetAddress.getLocalHost().getHostName();
 			String serverURI = String.format(SERVER_URI_FMT, ip, PORT);
 			JdkHttpServerFactory.createHttpServer(URI.create(serverURI), config, SSLContext.getDefault());
 
