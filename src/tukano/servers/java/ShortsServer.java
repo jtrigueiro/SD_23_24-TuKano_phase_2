@@ -340,7 +340,7 @@ public class ShortsServer implements Shorts {
     }
 
     private String getShortenBlobURL(Short s) {
-            return s.getBlobUrl().split(RestBlobs.PATH)[0];
+        return s.getBlobUrl().split(RestBlobs.PATH + "/" + s.getShortId())[0];
     }
 
 }
