@@ -7,7 +7,6 @@ import org.glassfish.jersey.server.ResourceConfig;
 import org.glassfish.jersey.jdkhttp.JdkHttpServerFactory;
 import javax.net.ssl.SSLContext;
 
-import tukano.servers.grpc.GrpcBlobsServerStub;
 import tukano.utils.Discovery;
 
 public class RestBlobsServer {
@@ -24,11 +23,7 @@ public class RestBlobsServer {
 		try {
 
 			ResourceConfig config = new ResourceConfig();
-			// config.register(RestBlobsResource.class);
-			if (args[0].toLowerCase().equals("true"))
-				config.register(new RestBlobsResource(true));
-			else
-				config.register(new RestBlobsResource(false));
+			config.register(RestBlobsResource.class);
 
 			String ip = InetAddress.getLocalHost().getHostName();
 			String serverURI = String.format(SERVER_URI_FMT, ip, PORT);

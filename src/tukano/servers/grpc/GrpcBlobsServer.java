@@ -30,11 +30,7 @@ public class GrpcBlobsServer {
         var keyManagerFactory = KeyManagerFactory.getInstance(KeyManagerFactory.getDefaultAlgorithm());
         keyManagerFactory.init(keystore, keyStorePassword.toCharArray());
 
-        GrpcBlobsServerStub stub;
-        if (args[0].toLowerCase().equals("true"))
-            stub = new GrpcBlobsServerStub(true);
-        else
-            stub = new GrpcBlobsServerStub(false);
+        GrpcBlobsServerStub stub = new GrpcBlobsServerStub();
 
         var sslContext = GrpcSslContexts.configure(SslContextBuilder.forServer(keyManagerFactory)).build();
         var server = NettyServerBuilder.forPort(PORT).addService(stub).sslContext(sslContext).build();
