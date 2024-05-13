@@ -52,8 +52,8 @@ public class BlobServer implements Blobs {
         json = new Gson();
         accessToken = new OAuth2AccessToken(accessTokenStr);
         service = new ServiceBuilder(apiKey).apiSecret(apiSecret).build(DropboxApi20.INSTANCE);
-        // if (cleanState)
-        // deleteFolder(ROOT_FOLDER);
+        if (cleanState)
+            deleteFolder(ROOT_FOLDER);
         createFolder(ROOT_FOLDER);
 
         // storagePath = Paths.get("src/tukano/servers/java/blobs");
