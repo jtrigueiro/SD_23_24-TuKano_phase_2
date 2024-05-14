@@ -33,7 +33,7 @@ public class GrpcUsersServer {
 
         var sslContext = GrpcSslContexts.configure(SslContextBuilder.forServer(keyManagerFactory)).build();
         var server = NettyServerBuilder.forPort(PORT).addService(stub).sslContext(sslContext).build();
-        var serverURI = String.format(SERVER_URI_FMT, InetAddress.getLocalHost().getHostAddress(), PORT, GRPC_CTX);
+        var serverURI = String.format(SERVER_URI_FMT, InetAddress.getLocalHost().getHostName(), PORT, GRPC_CTX);
 
         Discovery discovery = Discovery.getInstance();
         discovery.announce(SERVICE, serverURI);
