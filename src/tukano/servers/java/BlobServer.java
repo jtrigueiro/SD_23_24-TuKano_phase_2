@@ -10,13 +10,12 @@ import tukano.api.java.Result;
 import tukano.api.java.Shorts;
 import tukano.clients.ClientFactory;
 
-
 public class BlobServer implements Blobs {
 
     private final Path storagePath;
 
     public BlobServer() {
-        storagePath = Paths.get("src/tukano/servers/java/blobs");
+        storagePath = Paths.get("").toAbsolutePath();
 
         try {
             Files.createDirectories(storagePath);
@@ -35,7 +34,7 @@ public class BlobServer implements Blobs {
         // Check if the blobId is verified
         if (!bCheck.isOK())
             return Result.error(Result.ErrorCode.FORBIDDEN);
-    
+
         Path filePath = storagePath.resolve(blobId);
 
         if (Files.exists(filePath)) {
@@ -77,17 +76,16 @@ public class BlobServer implements Blobs {
 
         if (Files.exists(filePath)) {
             try {
-                byte[] data = Files.readAllBytes(filePath); // Read bytes from file
+                byte[] data = Files.readAllBytes(filePath);
                 return Result.ok(data);
 
             } catch (IOException e) {
                 return Result.error(Result.ErrorCode.CONFLICT);
-                
+
             }
         } else
             return Result.error(Result.ErrorCode.NOT_FOUND);
     }
-
 
     @Override
     public Result<Void> delete(String blobId) {
