@@ -29,7 +29,7 @@ public class ShortsServer implements Shorts {
     private static String shortByShortId = "SELECT s FROM Short s WHERE s.shortId = '%s'";
     private static String shortIdByOwnerId = "SELECT s.shortId FROM Short s WHERE s.ownerId = '%s'";
     private static String shortsByOwnerId = "SELECT s FROM Short s WHERE s.ownerId = '%s'";
-    private static String shortsWithBlobUrl = "SELECT s FROM Short s WHERE s.blobUrl LIKE '%%s%'";
+    //private static String shortsWithBlobUrl = "SELECT s FROM Short s WHERE s.blobUrl LIKE '%%s%'";
     private static String followsByUserIds = "SELECT f FROM Follows f WHERE f.userId1 = '%s' AND f.userId2 = '%s'";
     private static String followersByUserId = "SELECT f.userId1 FROM Follows f WHERE f.userId2 = '%s'";
     private static String followingIdByUserId = "SELECT f.userId2 FROM Follows f WHERE f.userId1 = '%s'";
@@ -74,7 +74,7 @@ public class ShortsServer implements Shorts {
     }
 
     private void replicate(URI blobURI) {       //FORMAT =  HTTPS://HOSTNAME:PORT/REST
-        List<Short> shorts = Hibernate.getInstance().sql(String.format(shortsWithBlobUrl, blobURI.toString()), Short.class);
+        List<Short> shorts = Hibernate.getInstance().jpql("SELECT s FROM Short s", Short.class);
         Map<URI, Blobs> clients = new ConcurrentHashMap<>();
 
         // Inicializar os clientes
@@ -82,32 +82,34 @@ public class ShortsServer implements Shorts {
             clients.put(uri, ClientFactory.getBlobsClient(uri));
 
         for(Short s : shorts) {
-            for(String url : getShortenBlobURL(s)) {        // [BLOBAPAGADO, BLOBDOWNLOAD] OU [BLOBORIGEM, BLOBAPAGADO]
-                if(!blobURI.toString().equals(url)) {
+            if(s.getBlobUrl().contains(blobURI.toString())) {
+                for(String url : getShortenBlobURL(s)) {        // [BLOBAPAGADO, BLOBDOWNLOAD] OU [BLOBORIGEM, BLOBAPAGADO]
+                    if(!blobURI.toString().equals(url)) {
 
-                    // Bytes to upload in different blob
-                    Result<byte[]> bytes = clients.get(URI.create(url)).download(s.getShortId());
+                        // Bytes to upload in different blob
+                        Result<byte[]> bytes = clients.get(URI.create(url)).download(s.getShortId());
 
-                    if(bytes.isOK()) {
-                        for(URI uri : clients.keySet()) {
+                        if(bytes.isOK()) {
+                            for(URI uri : clients.keySet()) {
 
-                            // Se for diferente do blob apagado e do blob de origem
-                            if(!uri.toString().equals(url) && !uri.toString().equals(blobURI.toString())) {
+                                // Se for diferente do blob apagado e do blob de origem
+                                if(!uri.toString().equals(url) && !uri.toString().equals(blobURI.toString())) {
 
-                                Result<Void> upload = clients.get(uri).upload(s.getShortId(), bytes.value());
+                                    Result<Void> upload = clients.get(uri).upload(s.getShortId(), bytes.value());
 
-                                if(upload.isOK()) {
-                                    // Atualizar a carga do blob
-                                    blobLoad.put(uri, blobLoad.get(uri) + 1);
+                                    if(upload.isOK()) {
+                                        // Atualizar a carga do blob
+                                        blobLoad.put(uri, blobLoad.get(uri) + 1);
 
-                                    // Atualizar o url do short
-                                    String newUrl = url + RestBlobs.PATH + s.getShortId() + "|" + uri.toString() + RestBlobs.PATH + s.getShortId();
-                                    s.setBlobUrl(newUrl);
-                                    Hibernate.getInstance().update(s);
-                                    break;
+                                        // Atualizar o url do short
+                                        String newUrl = url + RestBlobs.PATH + s.getShortId() + "|" + uri.toString() + RestBlobs.PATH + s.getShortId();
+                                        s.setBlobUrl(newUrl);
+                                        Hibernate.getInstance().update(s);
+                                        break;
+                                    }
                                 }
-                            }
-                        } // Saida do break
+                            } // Saida do break
+                        }
                     }
                 }
             }

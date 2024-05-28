@@ -38,14 +38,6 @@ public interface Discovery {
 	public URI[] knownUrisOf(String serviceName, int minReplies);
 
 	/**
-	 * Check if a given service has a given URI
-	 * @param service - name of the service
-	 * @param url - URI to check
-	 * @return true if the service has the URI, false otherwise
-	 */
-	public boolean hasURI(String service, String url);
-
-	/**
 	 * Get the instance of the Discovery service
 	 * @return the singleton instance of the Discovery service
 	 */
@@ -123,11 +115,6 @@ class DiscoveryImpl implements Discovery {
 		}
 	}
 
-	public boolean hasURI(String service, String url) {
-		URI uri = URI.create(url);
-		return uris.getOrDefault(service, Collections.emptySet()).contains(uri);
-	}
-
 	private void startListener() {
 		Log.info(String.format("Starting discovery on multicast group: %s, port: %d\n", DISCOVERY_ADDR.getAddress(), DISCOVERY_ADDR.getPort()));
 
@@ -149,13 +136,26 @@ class DiscoveryImpl implements Discovery {
 							lastUpdatedTimes.put(uri, System.currentTimeMillis());
 						}
 
-						var now = System.currentTimeMillis();
+						var now = System.currentTimeMillis();		// xxxxxxxxx - yyyyyyyyy > 5000
 						lastUpdatedTimes.entrySet().removeIf(e -> now - e.getValue() > DISCOVERY_RETRY_TIMEOUT);
 
+						/*
 						uris.entrySet().removeIf(e -> {
 							e.getValue().removeIf(uri -> !lastUpdatedTimes.containsKey(uri));
+
+							if(!e.getValue().isEmpty())
+								Log.info(String.format("Service REMOVED: %s, URIs: %s\n", e.getKey(), e.getValue()));
 							return e.getValue().isEmpty();
-						});
+						});*/
+
+						for(var e : uris.entrySet()) {
+							for(var uri : e.getValue()) {
+								if(!lastUpdatedTimes.containsKey(uri)) {
+									e.getValue().remove(uri);
+									Log.info(String.format("Service REMOVED: %s, URI: %s\n", e.getKey(), uri));
+								}				
+							}
+						}
 
 					} catch (Exception x) {
 						x.printStackTrace();
