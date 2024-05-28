@@ -1,8 +1,18 @@
 package tukano.servers.java;
 
+import java.net.DatagramPacket;
+import java.net.InetAddress;
+import java.net.MulticastSocket;
+import java.net.NetworkInterface;
 import java.net.URI;
 
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
+
+import org.junit.rules.DisableOnDebug;
+
 import java.util.ArrayList;
 import java.util.Comparator;
 
@@ -35,8 +45,43 @@ public class ShortsServer implements Shorts {
     private static String followsByUserId = "SELECT f FROM Follows f WHERE f.userId2 = '%s' OR f.userId1 = '%s'";
 
     private URI[] blobServers;
+    private Map<URI, Integer> blobLoad = new ConcurrentHashMap<>();
 
     public ShortsServer() {
+        replicationCheck();
+    }
+
+    private void replicationCheck() {
+        //Inicializar o mapa de carga de blobs
+        for(URI uri : Discovery.getInstance().knownUrisOf("blobs", 1))
+            blobLoad.put(uri, 0);
+
+        //Iniciar thread
+        new Thread(() -> {
+            while(true) {
+                try {
+                    Thread.sleep(10000);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+
+                Set<URI> blobs = Set.of(Discovery.getInstance().knownUrisOf("blobs", 1));
+                if(blobLoad.size() != blobs.size()) {
+                    for(URI uri : blobLoad.keySet()) {
+                        if(!blobs.contains(uri)) {
+                            blobLoad.remove(uri);
+                            replicate(uri);
+                            break;
+                        }
+                            
+                    }
+                }
+            }
+        }).start();
+    }
+
+    private void replicate(URI blobURI) {
+
     }
 
     @Override
@@ -48,9 +93,8 @@ public class ShortsServer implements Shorts {
         if (!uCheck.isOK())
             return Result.error(uCheck.error());
 
-        String[] blobUrls = new String[blobServers.length];
-
         blobServers = Discovery.getInstance().knownUrisOf("blobs", 1);
+        String[] blobUrls = new String[blobServers.length];
         
         for(int i = 0; i < blobServers.length; i++)
             blobUrls[i] = blobServers[i].toString();
@@ -79,6 +123,8 @@ public class ShortsServer implements Shorts {
             return Result.error(uCheck.error());
 
         String[] shortenURL = getShortenBlobURL(s);
+
+        blobServers = Discovery.getInstance().knownUrisOf("blobs", 1);
 
         for(String url : shortenURL) {
             Hibernate.getInstance().jpql(String.format(shortByShortId, url), Shorts.class);
@@ -118,7 +164,7 @@ public class ShortsServer implements Shorts {
         }
 
         Hibernate.getInstance().update(s);
-        return Result.ok(shorts.get(0));
+        return Result.ok(s);
     }
 
     @Override
