@@ -29,7 +29,6 @@ public class ShortsServer implements Shorts {
     private static String shortByShortId = "SELECT s FROM Short s WHERE s.shortId = '%s'";
     private static String shortIdByOwnerId = "SELECT s.shortId FROM Short s WHERE s.ownerId = '%s'";
     private static String shortsByOwnerId = "SELECT s FROM Short s WHERE s.ownerId = '%s'";
-    //private static String shortsWithBlobUrl = "SELECT s FROM Short s WHERE s.blobUrl LIKE '%%s%'";
     private static String followsByUserIds = "SELECT f FROM Follows f WHERE f.userId1 = '%s' AND f.userId2 = '%s'";
     private static String followersByUserId = "SELECT f.userId1 FROM Follows f WHERE f.userId2 = '%s'";
     private static String followingIdByUserId = "SELECT f.userId2 FROM Follows f WHERE f.userId1 = '%s'";
@@ -82,7 +81,9 @@ public class ShortsServer implements Shorts {
             clients.put(uri, ClientFactory.getBlobsClient(uri));
 
         for(Short s : shorts) {
+            Hibernate.getInstance().jpql(String.format(shortByShortId, s.getBlobUrl()), Short.class);
             if(s.getBlobUrl().contains(blobURI.toString())) {
+                Hibernate.getInstance().jpql(String.format(shortsByOwnerId, s.getBlobUrl()), Short.class);
                 for(String url : getShortenBlobURL(s)) {        // [BLOBAPAGADO, BLOBDOWNLOAD] OU [BLOBORIGEM, BLOBAPAGADO]
                     if(!blobURI.toString().equals(url)) {
 
@@ -102,7 +103,7 @@ public class ShortsServer implements Shorts {
                                         blobLoad.put(uri, blobLoad.get(uri) + 1);
 
                                         // Atualizar o url do short
-                                        String newUrl = url + RestBlobs.PATH + s.getShortId() + "|" + uri.toString() + RestBlobs.PATH + s.getShortId();
+                                        String newUrl = url + RestBlobs.PATH + "/" + s.getShortId() + "|" + uri.toString() + RestBlobs.PATH + "/" + s.getShortId();
                                         s.setBlobUrl(newUrl);
                                         Hibernate.getInstance().update(s);
                                         break;
