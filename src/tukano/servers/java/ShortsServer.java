@@ -1,17 +1,11 @@
 package tukano.servers.java;
 
-import java.net.DatagramPacket;
-import java.net.InetAddress;
-import java.net.MulticastSocket;
-import java.net.NetworkInterface;
 import java.net.URI;
 
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
-
-import org.junit.rules.DisableOnDebug;
 
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -35,6 +29,7 @@ public class ShortsServer implements Shorts {
     private static String shortByShortId = "SELECT s FROM Short s WHERE s.shortId = '%s'";
     private static String shortIdByOwnerId = "SELECT s.shortId FROM Short s WHERE s.ownerId = '%s'";
     private static String shortsByOwnerId = "SELECT s FROM Short s WHERE s.ownerId = '%s'";
+    private static String shortsWithBlobUrl = "SELECT s FROM Short s WHERE s.blobUrl LIKE '%%s%'";
     private static String followsByUserIds = "SELECT f FROM Follows f WHERE f.userId1 = '%s' AND f.userId2 = '%s'";
     private static String followersByUserId = "SELECT f.userId1 FROM Follows f WHERE f.userId2 = '%s'";
     private static String followingIdByUserId = "SELECT f.userId2 FROM Follows f WHERE f.userId1 = '%s'";
@@ -44,7 +39,6 @@ public class ShortsServer implements Shorts {
     private static String likesByUserId = "SELECT l FROM Likes l WHERE l.userId = '%s'";
     private static String followsByUserId = "SELECT f FROM Follows f WHERE f.userId2 = '%s' OR f.userId1 = '%s'";
 
-    private URI[] blobServers;
     private Map<URI, Integer> blobLoad = new ConcurrentHashMap<>();
 
     public ShortsServer() {
@@ -60,28 +54,64 @@ public class ShortsServer implements Shorts {
         new Thread(() -> {
             while(true) {
                 try {
-                    Thread.sleep(10000);
+                    Thread.sleep(5000);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
 
                 Set<URI> blobs = Set.of(Discovery.getInstance().knownUrisOf("blobs", 1));
-                if(blobLoad.size() != blobs.size()) {
+                if(blobLoad.size() > blobs.size()) {
                     for(URI uri : blobLoad.keySet()) {
                         if(!blobs.contains(uri)) {
                             blobLoad.remove(uri);
                             replicate(uri);
                             break;
                         }
-                            
                     }
                 }
             }
         }).start();
     }
 
-    private void replicate(URI blobURI) {
+    private void replicate(URI blobURI) {       //FORMAT =  HTTPS://HOSTNAME:PORT/REST
+        List<Short> shorts = Hibernate.getInstance().sql(String.format(shortsWithBlobUrl, blobURI.toString()), Short.class);
+        Map<URI, Blobs> clients = new ConcurrentHashMap<>();
 
+        // Inicializar os clientes
+        for(URI uri : blobLoad.keySet())
+            clients.put(uri, ClientFactory.getBlobsClient(uri));
+
+        for(Short s : shorts) {
+            for(String url : getShortenBlobURL(s)) {        // [BLOBAPAGADO, BLOBDOWNLOAD] OU [BLOBORIGEM, BLOBAPAGADO]
+                if(!blobURI.toString().equals(url)) {
+
+                    // Bytes to upload in different blob
+                    Result<byte[]> bytes = clients.get(URI.create(url)).download(s.getShortId());
+
+                    if(bytes.isOK()) {
+                        for(URI uri : clients.keySet()) {
+
+                            // Se for diferente do blob apagado e do blob de origem
+                            if(!uri.toString().equals(url) && !uri.toString().equals(blobURI.toString())) {
+
+                                Result<Void> upload = clients.get(uri).upload(s.getShortId(), bytes.value());
+
+                                if(upload.isOK()) {
+                                    // Atualizar a carga do blob
+                                    blobLoad.put(uri, blobLoad.get(uri) + 1);
+
+                                    // Atualizar o url do short
+                                    String newUrl = url + RestBlobs.PATH + s.getShortId() + "|" + uri.toString() + RestBlobs.PATH + s.getShortId();
+                                    s.setBlobUrl(newUrl);
+                                    Hibernate.getInstance().update(s);
+                                    break;
+                                }
+                            }
+                        } // Saida do break
+                    }
+                }
+            }
+        }
     }
 
     @Override
@@ -93,13 +123,12 @@ public class ShortsServer implements Shorts {
         if (!uCheck.isOK())
             return Result.error(uCheck.error());
 
-        blobServers = Discovery.getInstance().knownUrisOf("blobs", 1);
-        String[] blobUrls = new String[blobServers.length];
-        
-        for(int i = 0; i < blobServers.length; i++)
-            blobUrls[i] = blobServers[i].toString();
+        String[] blobs = minLoad();
+        Short s = new Short(userId, blobs);
 
-        Short s = new Short(userId, blobUrls);
+        // Atualizar a carga do blob
+        blobLoad.put(URI.create(blobs[0]), blobLoad.get(URI.create(blobs[0])) + 1);
+        blobLoad.put(URI.create(blobs[1]), blobLoad.get(URI.create(blobs[1])) + 1);
 
         Hibernate.getInstance().persist(s);
         return Result.ok(s);
@@ -124,16 +153,16 @@ public class ShortsServer implements Shorts {
 
         String[] shortenURL = getShortenBlobURL(s);
 
-        blobServers = Discovery.getInstance().knownUrisOf("blobs", 1);
-
         for(String url : shortenURL) {
-            Hibernate.getInstance().jpql(String.format(shortByShortId, url), Shorts.class);
             Blobs client2 = ClientFactory.getBlobsClient(URI.create(url));
             Result<Void> deleteBlob = client2.delete(s.getShortId());
 
             // Check if the blob was deleted
             if (!deleteBlob.isOK() && !deleteBlob.error().equals(Result.ErrorCode.NOT_FOUND))
                 return Result.error(deleteBlob.error());
+
+            // Atualizar a carga do blob
+            blobLoad.put(URI.create(url), blobLoad.get(URI.create(url)) - 1);
         }
 
         List<Likes> likes = Hibernate.getInstance().jpql(String.format(likesByShortId, s.getShortId()), Likes.class);
@@ -154,14 +183,6 @@ public class ShortsServer implements Shorts {
             return Result.error(Result.ErrorCode.NOT_FOUND);
 
         Short s = shorts.get(0);
-        
-        String[] urls = getShortenBlobURL(s);
-        for(String url : urls) {
-            if(!Discovery.getInstance().hasURI("blobs", url)) {
-                String newUrl = s.getBlobUrl().replace("|" + url + RestBlobs.PATH + shortId, "");
-                s.setBlobUrl(newUrl);
-            }
-        }
 
         Hibernate.getInstance().update(s);
         return Result.ok(s);
@@ -333,6 +354,9 @@ public class ShortsServer implements Shorts {
                 // Check if the blob was deleted
                 if (!delete.isOK())
                     return Result.error(delete.error());
+
+                // Atualizar a carga do blob
+                blobLoad.put(URI.create(url), blobLoad.get(URI.create(url)) - 1);
             }
 
             List<Likes> likes = Hibernate.getInstance().jpql(String.format(likesByShortId, s.getShortId()),
@@ -374,6 +398,28 @@ public class ShortsServer implements Shorts {
             return Result.error(Result.ErrorCode.NOT_FOUND);
 
         return Result.ok();
+    }
+
+    private String[] minLoad() {
+        String[] minLoad = new String[2];
+
+        int min = Integer.MAX_VALUE;
+        for(Map.Entry<URI, Integer> entry : blobLoad.entrySet()) {
+            if(entry.getValue() < min) {
+                min = entry.getValue();
+                minLoad[0] = entry.getKey().toString();
+            }
+        }
+
+        min = Integer.MAX_VALUE;
+        for(Map.Entry<URI, Integer> entry : blobLoad.entrySet()) {
+            if(entry.getValue() < min && !entry.getKey().toString().equals(minLoad[0])) {
+                min = entry.getValue();
+                minLoad[1] = entry.getKey().toString();
+            }
+        }
+
+        return minLoad;
     }
 
     private String[] getShortenBlobURL(Short s) {
