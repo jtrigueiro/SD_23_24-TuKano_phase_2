@@ -25,8 +25,8 @@ public class RestBlobsServer {
 			ResourceConfig config = new ResourceConfig();
 			config.register(RestBlobsResource.class);
 
-			String ip = InetAddress.getLocalHost().getHostName();
-			String serverURI = String.format(SERVER_URI_FMT, ip, PORT);
+			String host = InetAddress.getLocalHost().getHostName();
+			String serverURI = String.format(SERVER_URI_FMT, host, PORT);
 			JdkHttpServerFactory.createHttpServer(URI.create(serverURI), config, SSLContext.getDefault());
 
 			Discovery discovery = Discovery.getInstance();

@@ -27,10 +27,10 @@ public class Short implements Comparable<Short> {
 
 	public Short() {}
 
-	public Short(String ownerId, String blobUrl) {
+	public Short(String ownerId, String[] blobUrls) {
 		this.shortId = UUID.randomUUID().toString();
 		this.ownerId = ownerId;
-		this.blobUrl = String.format(blobUrl + "%s/%s", RestBlobs.PATH, shortId);
+		constructUrl(blobUrls);
 		this.timestamp = System.currentTimeMillis();
 		this.likes = 0;
 	}
@@ -100,6 +100,15 @@ public class Short implements Comparable<Short> {
 
 	public int getTotalLikes() {
 		return likes;
+	}
+
+	private void constructUrl(String[] blobsUrls) {
+		this.blobUrl = "";
+
+		for(int i = 0; i < blobsUrls.length - 1; i++)
+			this.blobUrl += String.format(blobsUrls[i] + "%s/%s|", RestBlobs.PATH, shortId);
+
+		this.blobUrl += String.format(blobsUrls[blobsUrls.length - 1] + "%s/%s", RestBlobs.PATH, shortId);
 	}
 
 }

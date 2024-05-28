@@ -14,6 +14,7 @@ import com.github.scribejava.core.model.Verb;
 import com.github.scribejava.core.oauth.OAuth20Service;
 import com.google.gson.Gson;
 
+import jakarta.ws.rs.ext.Provider;
 import tukano.utils.dropbox.msgs.CreateFolderV2Args;
 import tukano.utils.dropbox.msgs.DeleteFileV2Args;
 import tukano.utils.dropbox.msgs.DownloadFileArgs;
@@ -24,6 +25,7 @@ import tukano.api.java.Result;
 import tukano.api.java.Shorts;
 import tukano.clients.ClientFactory;
 
+@Provider
 public class BlobProxyServer implements Blobs {
     private static final String apiKey = "b994yeq62paqye8";
     private static final String apiSecret = "8w3xrdm9bzh6veo";

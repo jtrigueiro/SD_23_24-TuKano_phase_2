@@ -7,9 +7,12 @@ import java.net.InetSocketAddress;
 import java.net.MulticastSocket;
 import java.net.NetworkInterface;
 import java.net.URI;
-import java.util.logging.Logger;
+import java.util.Collections;
 import java.util.HashMap;
-
+import java.util.Map;
+import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.logging.Logger;
 
 /**
  * <p>A class interface to perform service discovery based on periodic 
@@ -35,6 +38,14 @@ public interface Discovery {
 	public URI[] knownUrisOf(String serviceName, int minReplies);
 
 	/**
+	 * Check if a given service has a given URI
+	 * @param service - name of the service
+	 * @param url - URI to check
+	 * @return true if the service has the URI, false otherwise
+	 */
+	public boolean hasURI(String service, String url);
+
+	/**
 	 * Get the instance of the Discovery service
 	 * @return the singleton instance of the Discovery service
 	 */
@@ -49,39 +60,35 @@ public interface Discovery {
 class DiscoveryImpl implements Discovery {
 	
 	private static Logger Log = Logger.getLogger(Discovery.class.getName());
-	private HashMap<String, URI[]> discoveredServices = new HashMap<String, URI[]>();
-	
-
-	// The pre-aggreed multicast endpoint assigned to perform discovery.
 
 	static final int DISCOVERY_RETRY_TIMEOUT = 5000;
 	static final int DISCOVERY_ANNOUNCE_PERIOD = 1000;
-
-	// Replace with appropriate values: allowed IP Multicast range: 224.0.0.1 - 239.255.255.255
 	static final InetSocketAddress DISCOVERY_ADDR = new InetSocketAddress("224.0.0.1", 9000);
 
-	// Used to separate the two fields that make up a service announcement.
+	// Used separate the two fields that make up a service announcement.
 	private static final String DELIMITER = "\t";
 
 	private static final int MAX_DATAGRAM_SIZE = 65536;
 
 	private static Discovery singleton;
 
+	private Map<String, Set<URI>> uris = new ConcurrentHashMap<>();
+	private Map<URI, Long> lastUpdatedTimes = new HashMap<>();
+	
 	synchronized static Discovery getInstance() {
 		if (singleton == null) {
 			singleton = new DiscoveryImpl();
 		}
 		return singleton;
 	}
-
+		
 	private DiscoveryImpl() {
 		this.startListener();
 	}
 
 	@Override
 	public void announce(String serviceName, String serviceURI) {
-		Log.info(String.format("Starting Discovery announcements on: %s for: %s -> %s\n", DISCOVERY_ADDR, serviceName,
-				serviceURI));
+		Log.info(String.format("Starting Discovery announcements on: %s for: %s -> %s\n", DISCOVERY_ADDR, serviceName, serviceURI));
 
 		var pktBytes = String.format("%s%s%s", serviceName, DELIMITER, serviceURI).getBytes();
 		var pkt = new DatagramPacket(pktBytes, pktBytes.length, DISCOVERY_ADDR);
@@ -92,7 +99,7 @@ class DiscoveryImpl implements Discovery {
 				while (true) {
 					try {
 						ds.send(pkt);
-						Thread.sleep(DISCOVERY_ANNOUNCE_PERIOD);
+						Sleep.ms(DISCOVERY_ANNOUNCE_PERIOD);
 					} catch (Exception e) {
 						e.printStackTrace();
 					}
@@ -106,20 +113,23 @@ class DiscoveryImpl implements Discovery {
 
 	@Override
 	public URI[] knownUrisOf(String serviceName, int minEntries) {
-		while (true) {
-			try {
-				if(discoveredServices.containsKey(serviceName) && discoveredServices.get(serviceName).length >= minEntries)
-					return discoveredServices.get(serviceName);
-				Thread.sleep(DISCOVERY_RETRY_TIMEOUT);
-			} catch (InterruptedException e) {
-				e.printStackTrace();
-			}
+		while(true) {
+			var res = uris.getOrDefault(serviceName, Collections.emptySet());
+			if( res.size() >= minEntries )
+				return res.toArray( new URI[res.size()]);
+			else
+				Sleep.ms(DISCOVERY_ANNOUNCE_PERIOD);
+				
 		}
 	}
 
+	public boolean hasURI(String service, String url) {
+		URI uri = URI.create(url);
+		return uris.getOrDefault(service, Collections.emptySet()).contains(uri);
+	}
+
 	private void startListener() {
-		Log.info(String.format("Starting discovery on multicast group: %s, port: %d\n", DISCOVERY_ADDR.getAddress(),
-				DISCOVERY_ADDR.getPort()));
+		Log.info(String.format("Starting discovery on multicast group: %s, port: %d\n", DISCOVERY_ADDR.getAddress(), DISCOVERY_ADDR.getPort()));
 
 		new Thread(() -> {
 			try (var ms = new MulticastSocket(DISCOVERY_ADDR.getPort())) {
@@ -128,42 +138,25 @@ class DiscoveryImpl implements Discovery {
 					try {
 						var pkt = new DatagramPacket(new byte[MAX_DATAGRAM_SIZE], MAX_DATAGRAM_SIZE);
 						ms.receive(pkt);
-
 						var msg = new String(pkt.getData(), 0, pkt.getLength());
-						Log.info(String.format("Received: %s", msg));
+						Log.finest(String.format("Received: %s", msg));
 
 						var parts = msg.split(DELIMITER);
 						if (parts.length == 2) {
 							var serviceName = parts[0];
 							var uri = URI.create(parts[1]);
+							uris.computeIfAbsent(serviceName, (k) -> ConcurrentHashMap.newKeySet()).add( uri );
+							lastUpdatedTimes.put(uri, System.currentTimeMillis());
+						}
 
-							if(discoveredServices.containsKey(serviceName)){
-								URI[] uris = discoveredServices.get(serviceName);
-								boolean found = false;
-								int i = 0;
+						var now = System.currentTimeMillis();
+						lastUpdatedTimes.entrySet().removeIf(e -> now - e.getValue() > DISCOVERY_RETRY_TIMEOUT);
 
-								while (!found && i < uris.length) {
-									if(uris[i].compareTo(uri) == 0)
-										found = true;
-									i++;
-								}
+						uris.entrySet().removeIf(e -> {
+							e.getValue().removeIf(uri -> !lastUpdatedTimes.containsKey(uri));
+							return e.getValue().isEmpty();
+						});
 
-								if(!found){
-									URI[] newUris = new URI[uris.length + 1];
-									for(int j = 0; j < uris.length; j++){
-										newUris[j] = uris[j];
-									}
-									newUris[uris.length] = uri;
-									discoveredServices.put(serviceName, newUris);
-								}
-							
-							}
-							else {
-								URI[] newUris = new URI[1];
-								newUris[0] = uri;
-								discoveredServices.put(serviceName, newUris);
-							}
-					}
 					} catch (Exception x) {
 						x.printStackTrace();
 					}

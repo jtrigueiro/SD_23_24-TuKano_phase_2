@@ -35,12 +35,8 @@ public class ShortsServer implements Shorts {
     private static String followsByUserId = "SELECT f FROM Follows f WHERE f.userId2 = '%s' OR f.userId1 = '%s'";
 
     private URI[] blobServers;
-    // To distribute the shorts among the blobs servers
-    private int[] blobsShortsCounterMem;
 
     public ShortsServer() {
-        blobServers = Discovery.getInstance().knownUrisOf("blobs", 1);
-        blobsShortsCounterMem = new int[blobServers.length];
     }
 
     @Override
@@ -52,7 +48,14 @@ public class ShortsServer implements Shorts {
         if (!uCheck.isOK())
             return Result.error(uCheck.error());
 
-        Short s = new Short(userId, incrementBlobCounterAndGetURI());
+        String[] blobUrls = new String[blobServers.length];
+
+        blobServers = Discovery.getInstance().knownUrisOf("blobs", 1);
+        
+        for(int i = 0; i < blobServers.length; i++)
+            blobUrls[i] = blobServers[i].toString();
+
+        Short s = new Short(userId, blobUrls);
 
         Hibernate.getInstance().persist(s);
         return Result.ok(s);
@@ -75,21 +78,22 @@ public class ShortsServer implements Shorts {
         if (!uCheck.isOK())
             return Result.error(uCheck.error());
 
-        String shortenURL = getShortenBlobURL(s);
+        String[] shortenURL = getShortenBlobURL(s);
 
-        Blobs client2 = ClientFactory.getBlobsClient(URI.create(shortenURL));
-        Result<Void> deleteBlob = client2.delete(s.getShortId());
+        for(String url : shortenURL) {
+            Hibernate.getInstance().jpql(String.format(shortByShortId, url), Shorts.class);
+            Blobs client2 = ClientFactory.getBlobsClient(URI.create(url));
+            Result<Void> deleteBlob = client2.delete(s.getShortId());
 
-        // Check if the blob was deleted
-        if (!deleteBlob.isOK() && !deleteBlob.error().equals(Result.ErrorCode.NOT_FOUND))
-            return Result.error(deleteBlob.error());
+            // Check if the blob was deleted
+            if (!deleteBlob.isOK() && !deleteBlob.error().equals(Result.ErrorCode.NOT_FOUND))
+                return Result.error(deleteBlob.error());
+        }
 
         List<Likes> likes = Hibernate.getInstance().jpql(String.format(likesByShortId, s.getShortId()), Likes.class);
 
         for (Likes l : likes)
             Hibernate.getInstance().delete(l);
-
-        decrementBlobCounter(shortenURL);
 
         Hibernate.getInstance().delete(s);
         return Result.ok();
@@ -103,6 +107,17 @@ public class ShortsServer implements Shorts {
         if (shorts.isEmpty())
             return Result.error(Result.ErrorCode.NOT_FOUND);
 
+        Short s = shorts.get(0);
+        
+        String[] urls = getShortenBlobURL(s);
+        for(String url : urls) {
+            if(!Discovery.getInstance().hasURI("blobs", url)) {
+                String newUrl = s.getBlobUrl().replace("|" + url + RestBlobs.PATH + shortId, "");
+                s.setBlobUrl(newUrl);
+            }
+        }
+
+        Hibernate.getInstance().update(s);
         return Result.ok(shorts.get(0));
     }
 
@@ -265,21 +280,20 @@ public class ShortsServer implements Shorts {
 
         // Deleting shorts and its likes and blobs
         for (Short s : shorts) {
-            String shortenURL = getShortenBlobURL(s);
+            for(String url : getShortenBlobURL(s)) {
+                Blobs client = ClientFactory.getBlobsClient(URI.create(url));
+                Result<Void> delete = client.delete(s.getShortId());
 
-            Blobs client = ClientFactory.getBlobsClient(URI.create(shortenURL));
-            Result<Void> delete = client.delete(s.getShortId());
-
-            // Check if the blob was deleted
-            if (!delete.isOK())
-                return Result.error(delete.error());
+                // Check if the blob was deleted
+                if (!delete.isOK())
+                    return Result.error(delete.error());
+            }
 
             List<Likes> likes = Hibernate.getInstance().jpql(String.format(likesByShortId, s.getShortId()),
                     Likes.class);
             for (Likes l : likes)
                 Hibernate.getInstance().delete(l);
 
-            decrementBlobCounter(shortenURL);
             Hibernate.getInstance().delete(s);
         }
 
@@ -316,31 +330,18 @@ public class ShortsServer implements Shorts {
         return Result.ok();
     }
 
-    private void decrementBlobCounter(String URI) {
-        for (int i = 0; i < blobServers.length; i++) {
-            if (blobServers[i].toString().equals(URI)) {
-                blobsShortsCounterMem[i]--;
-                break;
-            }
+    private String[] getShortenBlobURL(Short s) {
+        String[] shortenURLs = s.getBlobUrl().split(RestBlobs.PATH + "/" + s.getShortId());
+        String[] finalURLs = new String[shortenURLs.length];
+
+        for(int i = 0; i < shortenURLs.length; i++) {
+            if(shortenURLs[i].charAt(0) == '|')
+                finalURLs[i] = shortenURLs[i].substring(1);
+            else
+                finalURLs[i] = shortenURLs[i];
         }
-    }
-
-    private String incrementBlobCounterAndGetURI() {
-        int minimum = Integer.MAX_VALUE;
-        int minimumPos = 0;
-        for (int i = 0; i < blobsShortsCounterMem.length; i++) {
-            if (blobsShortsCounterMem[i] < minimum) {
-                minimum = blobsShortsCounterMem[i];
-                minimumPos = i;
-            }
-        }
-
-        blobsShortsCounterMem[minimumPos]++;
-        return blobServers[minimumPos].toString();
-    }
-
-    private String getShortenBlobURL(Short s) {
-        return s.getBlobUrl().split(RestBlobs.PATH + "/" + s.getShortId())[0];
+            
+        return finalURLs;
     }
 
 }

@@ -29,8 +29,8 @@ public class RestBlobsProxyServer {
             else
                 config.register(new RestBlobsProxyResource(false));
 
-            String ip = InetAddress.getLocalHost().getHostName();
-            String serverURI = String.format(SERVER_URI_FMT, ip, PORT);
+            String host = InetAddress.getLocalHost().getHostName();
+            String serverURI = String.format(SERVER_URI_FMT, host, PORT);
             JdkHttpServerFactory.createHttpServer(URI.create(serverURI), config, SSLContext.getDefault());
 
             Discovery discovery = Discovery.getInstance();
