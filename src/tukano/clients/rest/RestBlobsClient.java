@@ -1,6 +1,5 @@
 package tukano.clients.rest;
 
-import tukano.api.java.Blobs;
 import tukano.api.java.Result;
 import tukano.api.rest.RestBlobs;
 import tukano.impl.ExtendedBlobs;

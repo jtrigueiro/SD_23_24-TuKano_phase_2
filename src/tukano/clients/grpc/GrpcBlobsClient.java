@@ -11,7 +11,6 @@ import com.google.protobuf.ByteString;
 import io.grpc.netty.GrpcSslContexts;
 import io.grpc.netty.NettyChannelBuilder;
 import io.netty.handler.ssl.SslContextBuilder;
-import tukano.api.java.Blobs;
 import tukano.api.java.Result;
 import tukano.impl.ExtendedBlobs;
 import tukano.impl.grpc.generated_java.BlobsGrpc;
@@ -81,24 +80,22 @@ public class GrpcBlobsClient extends GrpcClient implements ExtendedBlobs {
         });
     }
 
+    @Override
+    public Result<Void> upload(String blobId, byte[] bytes, String timestamp, String verifier) {
+        return upload(blobId, bytes);
+    }
+
+    @Override
+    public Result<byte[]> download(String blobId, String timestamp, String verifier) {
+        return download(blobId);
+    }
+
     // ----------------- Unimplemented methods -----------------
 
     @Override
     public Result<Void> validateOperation(String blobId, String timestamp, String verifier) {
         // TODO Auto-generated method stub
         throw new UnsupportedOperationException("Unimplemented method 'validateOperation'");
-    }
-
-    @Override
-    public Result<Void> upload(String blobId, byte[] bytes, String timestamp, String verifier) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'upload'");
-    }
-
-    @Override
-    public Result<byte[]> download(String blobId, String timestamp, String verifier) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'download'");
     }
 
 }
