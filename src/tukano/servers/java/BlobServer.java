@@ -9,14 +9,16 @@ import tukano.api.java.Blobs;
 import tukano.api.java.Result;
 import tukano.api.java.Shorts;
 import tukano.clients.ClientFactory;
+import tukano.utils.Hibernate;
 
 public class BlobServer implements Blobs {
 
     private final Path storagePath;
-    private final String privateKey;
+    private final String privateKey, serverURI;
 
-    public BlobServer(String privateKey) {
+    public BlobServer(String privateKey, String serverURI) {
         this.privateKey = privateKey;
+        this.serverURI = serverURI;
         storagePath = Paths.get("").toAbsolutePath();
 
         try {
@@ -30,12 +32,12 @@ public class BlobServer implements Blobs {
 
     @Override
     public Result<Void> upload(String blobId, byte[] bytes) {
-            Shorts client = ClientFactory.getShortsClient();
-            Result<Void> bCheck = client.checkBlobId(blobId);
+        Shorts client = ClientFactory.getShortsClient();
+        Result<Void> bCheck = client.checkBlobId(blobId);
 
-            // Check if the blobId is verified
-            if (!bCheck.isOK())
-                return Result.error(Result.ErrorCode.FORBIDDEN);
+        // Check if the blobId is verified
+        if (!bCheck.isOK())
+            return Result.error(Result.ErrorCode.FORBIDDEN);
 
         Path filePath = storagePath.resolve(blobId);
 
@@ -108,10 +110,12 @@ public class BlobServer implements Blobs {
     }
 
     public Result<Void> validateOperation(String blobId, String timestamp, String verifier) {
-        String toHash = org.apache.commons.codec.digest.DigestUtils.sha256Hex(blobId + timestamp + privateKey);
+        String toHash = org.apache.commons.codec.digest.DigestUtils
+                .sha256Hex(serverURI + "/blobs/" + blobId + timestamp + privateKey);
 
-        if (!verifier.equals(toHash))
+        if (!verifier.equals(toHash)) {
             return Result.error(Result.ErrorCode.FORBIDDEN);
+        }
 
         return Result.ok();
     }

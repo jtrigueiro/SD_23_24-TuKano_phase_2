@@ -23,8 +23,8 @@ import tukano.impl.grpc.generated_java.BlobsProtoBuf.UploadResult;
 public class GrpcBlobsServerStub implements BlobsGrpc.AsyncService, BindableService {
     final Blobs impl;
 
-    public GrpcBlobsServerStub(String privateKey) {
-        this.impl = new BlobServer(privateKey);
+    public GrpcBlobsServerStub(String privateKey, String serverURI) {
+        this.impl = new BlobServer(privateKey, serverURI);
     }
 
     @Override
@@ -72,7 +72,7 @@ public class GrpcBlobsServerStub implements BlobsGrpc.AsyncService, BindableServ
     }
 
     private boolean validateOperation(String blobUrl) {
-        try {               // FORMAT:  grpc://hostname:8080/grpc/blobs/blobID?verifier=xxxxx&timestamp=xxxxx
+        try { // FORMAT: grpc://hostname:8080/grpc/blobs/blobID?verifier=xxxxx&timestamp=xxxxx
             URI uri = new URI(blobUrl);
             String[] params = uri.getQuery().split("&");
 

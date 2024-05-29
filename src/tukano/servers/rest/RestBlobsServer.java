@@ -21,14 +21,16 @@ public class RestBlobsServer {
 
 	public static void main(String[] args) {
 		try {
-			//int index = args[0]
+			// int index = args[0]
 			String privateKey = args[1];
 
 			ResourceConfig config = new ResourceConfig();
-			config.register(new RestBlobsResource(privateKey));
 
 			String host = InetAddress.getLocalHost().getHostName();
 			String serverURI = String.format(SERVER_URI_FMT, host, PORT);
+
+			config.register(new RestBlobsResource(privateKey, serverURI));
+
 			JdkHttpServerFactory.createHttpServer(URI.create(serverURI), config, SSLContext.getDefault());
 
 			Discovery discovery = Discovery.getInstance();

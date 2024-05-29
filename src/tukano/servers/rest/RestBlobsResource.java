@@ -13,9 +13,9 @@ public class RestBlobsResource extends RestResource implements RestBlobs {
     final Blobs impl;
     final String privateKey;
 
-    public RestBlobsResource(String privateKey) {
+    public RestBlobsResource(String privateKey, String serverURI) {
         this.privateKey = privateKey;
-        this.impl = new BlobServer(privateKey);
+        this.impl = new BlobServer(privateKey, serverURI);
     }
 
     @Override
