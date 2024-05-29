@@ -22,6 +22,7 @@ import tukano.api.java.Shorts;
 import tukano.utils.Discovery;
 import tukano.utils.Hibernate;
 import tukano.clients.ClientFactory;
+import tukano.impl.ExtendedBlobs;
 
 public class ShortsServer implements Shorts {
 
@@ -78,7 +79,7 @@ public class ShortsServer implements Shorts {
 
     private void replicate(URI blobURI) { // FORMAT = HTTPS://HOSTNAME:PORT/REST
         List<Short> shorts = Hibernate.getInstance().jpql("SELECT s FROM Short s", Short.class);
-        Map<URI, Blobs> clients = new ConcurrentHashMap<>();
+        Map<URI, ExtendedBlobs> clients = new ConcurrentHashMap<>();
 
         // Inicializar os clientes
         for (URI uri : blobLoad.keySet())
@@ -90,9 +91,12 @@ public class ShortsServer implements Shorts {
                 Hibernate.getInstance().jpql(String.format(shortsByOwnerId, s.getBlobUrl()), Short.class);
                 for (String url : getShortenBlobURL(s)) { // [BLOBAPAGADO, BLOBDOWNLOAD] OU [BLOBORIGEM, BLOBAPAGADO]
                     if (!blobURI.toString().equals(url)) {
-
+                        long timestamp = System.currentTimeMillis();
                         // Bytes to upload in different blob
-                        Result<byte[]> bytes = clients.get(URI.create(url)).download(s.getShortId());
+                        Result<byte[]> bytes = clients.get(URI.create(url)).download(s.getShortId(),
+                                String.valueOf(timestamp),
+                                org.apache.commons.codec.digest.DigestUtils
+                                        .sha256Hex(url + "/blobs/" + s.getShortId() + timestamp + privateKey));
 
                         if (bytes.isOK()) {
                             for (URI uri : clients.keySet()) {
@@ -141,7 +145,7 @@ public class ShortsServer implements Shorts {
 
         Hibernate.getInstance().persist(s); // URL1?verifier=xxxxx&timestamp=now|URL2?verifier=yyyyy&timestamp=now
 
-        for(int i = 0; i < blobs.length; i++)
+        for (int i = 0; i < blobs.length; i++)
             blobs[i] += RestBlobs.PATH + "/" + s.getShortId();
 
         return Result.ok(constructUrl(blobs, s));
