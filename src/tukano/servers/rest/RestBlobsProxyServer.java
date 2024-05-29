@@ -23,14 +23,15 @@ public class RestBlobsProxyServer {
         try {
 
             Boolean toClean = Boolean.parseBoolean(args[0]);
-            //int index = args[1]
+            // int index = args[1]
             String privateKey = args[2];
 
             ResourceConfig config = new ResourceConfig();
-            config.register(new RestBlobsProxyResource(toClean, privateKey));
 
             String host = InetAddress.getLocalHost().getHostName();
             String serverURI = String.format(SERVER_URI_FMT, host, PORT);
+
+            config.register(new RestBlobsProxyResource(toClean, privateKey, serverURI));
             JdkHttpServerFactory.createHttpServer(URI.create(serverURI), config, SSLContext.getDefault());
 
             Discovery discovery = Discovery.getInstance();

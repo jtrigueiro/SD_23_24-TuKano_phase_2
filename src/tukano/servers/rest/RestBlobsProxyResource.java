@@ -11,18 +11,18 @@ public class RestBlobsProxyResource extends RestResource implements RestBlobs {
 
     final Blobs impl;
 
-    public RestBlobsProxyResource(boolean cleanState, String privateKey) {
-        this.impl = new BlobProxyServer(cleanState, privateKey);
+    public RestBlobsProxyResource(boolean cleanState, String privateKey, String serverURI) {
+        this.impl = new BlobProxyServer(cleanState, privateKey, serverURI);
     }
 
     @Override
-    public void upload(String blobId, byte[] bytes, String verifier, String timestamp) {
+    public void upload(String blobId, byte[] bytes, String timestamp, String verifier) {
         resultOrThrow(impl.validateOperation(blobId, timestamp, verifier));
         resultOrThrow(impl.upload(blobId, bytes));
     }
 
     @Override
-    public byte[] download(String blobId, String verifier, String timestamp) {
+    public byte[] download(String blobId, String timestamp, String verifier) {
         resultOrThrow(impl.validateOperation(blobId, timestamp, verifier));
         return resultOrThrow(impl.download(blobId));
     }

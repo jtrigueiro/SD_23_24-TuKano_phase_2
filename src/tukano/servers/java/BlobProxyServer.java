@@ -20,13 +20,14 @@ import tukano.utils.dropbox.msgs.UploadFileArgs;
 import tukano.api.java.Blobs;
 import tukano.api.java.Result;
 import tukano.api.java.Shorts;
+import tukano.api.rest.RestBlobs;
 import tukano.clients.ClientFactory;
 
 @Provider
 public class BlobProxyServer implements Blobs {
     private static final String apiKey = "b994yeq62paqye8";
     private static final String apiSecret = "8w3xrdm9bzh6veo";
-    private static final String accessTokenStr = "sl.B2HH6ud9dSK9u_lmEqpd7Q8wWG3OWsKr1I0gF3MgYmpZRcTlyF6rHjvhOqwNR7F_9rX4tJrIhPVbvpehxUu8_Kv-gs2W1cdd9K8tQAp8RMJO4U_xxQgL0EOqWndRg-M7Zaf5s1GKZQwO";
+    private static final String accessTokenStr = "sl.B2IJdXXnNuWLnQi4Sv4qxA25fWURFJ_tBR262BnKdnuWKEZy24LCkg9_ZpcDzbnKPr3_dUlLDlOCyIj92JanS1jlZ8cKEy553y7nKCaxX6AY0WY6uPacbqRur_Tj_Q_xqrzBJnufa7EO";
 
     private static final String DELETE_FILE_V2_URL = "https://api.dropboxapi.com/2/files/delete_v2";
     private static final String UPLOAD_FILE_URL = "https://content.dropboxapi.com/2/files/upload";
@@ -44,10 +45,11 @@ public class BlobProxyServer implements Blobs {
     private final Gson json;
     private final OAuth20Service service;
     private final OAuth2AccessToken accessToken;
-    private final String privateKey;
-    
-    public BlobProxyServer(Boolean cleanState, String privateKey) {
+    private final String privateKey, serverURI;
+
+    public BlobProxyServer(Boolean cleanState, String privateKey, String serverURI) {
         this.privateKey = privateKey;
+        this.serverURI = serverURI;
         json = new Gson();
         accessToken = new OAuth2AccessToken(accessTokenStr);
         service = new ServiceBuilder(apiKey).apiSecret(apiSecret).build(DropboxApi20.INSTANCE);
@@ -172,16 +174,11 @@ public class BlobProxyServer implements Blobs {
 
     @Override
     public Result<Void> validateOperation(String blobId, String timestamp, String verifier) {
-        try {
-            MessageDigest digest = MessageDigest.getInstance("SHA-256");
-            String toHash = blobId + timestamp + privateKey;
-            byte[] hash = digest.digest(toHash.getBytes());
+        String toHash = org.apache.commons.codec.digest.DigestUtils
+                .sha256Hex(serverURI + RestBlobs.PATH + "/" + blobId + timestamp + privateKey);
 
-            if (!verifier.equals(new String(hash)))
-                return Result.error(Result.ErrorCode.FORBIDDEN);
-
-        } catch (Exception e) {
-            e.printStackTrace();
+        if (!verifier.equals(toHash)) {
+            return Result.error(Result.ErrorCode.FORBIDDEN);
         }
 
         return Result.ok();
