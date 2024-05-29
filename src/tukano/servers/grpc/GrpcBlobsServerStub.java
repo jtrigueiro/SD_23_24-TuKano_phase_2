@@ -37,7 +37,7 @@ public class GrpcBlobsServerStub implements BlobsGrpc.AsyncService, BindableServ
         if (!validateOperation(request.getBlobId()))
             responseObserver.onError(errorCodeToStatus(Result.ErrorCode.FORBIDDEN));
 
-        var res = impl.upload(request.getBlobId(), request.getData().toByteArray());
+        var res = impl.upload(request.getBlobId().split("?")[0], request.getData().toByteArray());
         if (!res.isOK())
             responseObserver.onError(errorCodeToStatus(res.error()));
         else {
@@ -51,7 +51,7 @@ public class GrpcBlobsServerStub implements BlobsGrpc.AsyncService, BindableServ
         if (!validateOperation(request.getBlobId()))
             responseObserver.onError(errorCodeToStatus(Result.ErrorCode.FORBIDDEN));
 
-        var res = impl.download(request.getBlobId());
+        var res = impl.download(request.getBlobId().split("?")[0]);
         if (!res.isOK())
             responseObserver.onError(errorCodeToStatus(res.error()));
         else {

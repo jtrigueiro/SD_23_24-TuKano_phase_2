@@ -190,9 +190,8 @@ public class ShortsServer implements Shorts {
             return Result.error(Result.ErrorCode.NOT_FOUND);
 
         Short s = shorts.get(0);
-
-        Hibernate.getInstance().update(s);
-        return Result.ok(s);
+        String[] blobs = s.getBlobUrl().split("\\|");
+        return Result.ok(constructUrl(blobs, s));
     }
 
     @Override
