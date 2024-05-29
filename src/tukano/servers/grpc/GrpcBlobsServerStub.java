@@ -1,7 +1,5 @@
 package tukano.servers.grpc;
 
-import java.net.URI;
-
 import com.google.protobuf.ByteString;
 
 import io.grpc.BindableService;
@@ -73,10 +71,12 @@ public class GrpcBlobsServerStub implements BlobsGrpc.AsyncService, BindableServ
 
     private boolean validateOperation(String blobUrl) {
         try { // FORMAT: grpc://hostname:8080/grpc/blobs/blobID?verifier=xxxxx&timestamp=xxxxx
-            URI uri = new URI(blobUrl);
-            String[] params = uri.getQuery().split("&");
+            //URI uri = new URI(blobUrl);
+            //String[] params = uri.getQuery().split("&");
 
-            String blobId = blobUrl.split("?")[0];
+            String[] parts = blobUrl.split("\\?");
+            String[] params = parts[1].split("&");
+            String blobId = parts[0];
             String verifier = params[0].split("=")[1];
             String timestamp = params[1].split("=")[1];
 
