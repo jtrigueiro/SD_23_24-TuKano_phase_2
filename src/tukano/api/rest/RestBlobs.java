@@ -16,7 +16,6 @@ public interface RestBlobs {
 	String PATH = "/blobs";
 	String VERIFIER = "verifier";
 	String TIMESTAMP = "timestamp";
-	String TOKEN = "token";
 	String BLOB_ID = "blobId";
  
  	@POST
@@ -31,5 +30,5 @@ public interface RestBlobs {
 
 	@DELETE
 	@Path("{" + BLOB_ID +"}")
-	void delete(@PathParam(BLOB_ID) String blobId, @QueryParam(TOKEN) String token);
+	void delete(@PathParam(BLOB_ID) String blobId);
 }

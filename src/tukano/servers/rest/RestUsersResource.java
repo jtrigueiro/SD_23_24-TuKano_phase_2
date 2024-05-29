@@ -3,20 +3,18 @@ package tukano.servers.rest;
 import java.util.List;
 
 import jakarta.inject.Singleton;
-import jakarta.ws.rs.ext.Provider;
 import tukano.api.User;
 import tukano.api.java.Users;
 import tukano.api.rest.RestUsers;
 import tukano.servers.java.UsersServer;
 
 @Singleton
-@Provider
 public class RestUsersResource extends RestResource implements RestUsers {
 
 	final Users impl;
 
-	public RestUsersResource(String secret) {
-		this.impl = new UsersServer(secret);
+	public RestUsersResource() {
+		this.impl = new UsersServer();
 	}
 
 	@Override

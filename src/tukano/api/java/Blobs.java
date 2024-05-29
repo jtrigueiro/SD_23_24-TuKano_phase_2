@@ -63,6 +63,4 @@ public interface Blobs {
 	Result<Void> delete(String blobId);
 
     Result<Void> validateOperation(String blobId, String timestamp, String verifier);
-
-	Result<Void> validateToken(String token);
 }

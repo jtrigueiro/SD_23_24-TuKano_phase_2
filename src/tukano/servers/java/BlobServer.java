@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.security.MessageDigest;
 
 import tukano.api.java.Blobs;
 import tukano.api.java.Result;
@@ -14,11 +13,9 @@ import tukano.clients.ClientFactory;
 public class BlobServer implements Blobs {
 
     private final Path storagePath;
-    private final String secret;
     private final String privateKey;
 
-    public BlobServer(String secret, String privateKey) {
-        this.secret = secret;
+    public BlobServer(String privateKey) {
         this.privateKey = privateKey;
         storagePath = Paths.get("").toAbsolutePath();
 
@@ -111,23 +108,9 @@ public class BlobServer implements Blobs {
     }
 
     public Result<Void> validateOperation(String blobId, String timestamp, String verifier) {
-        try {
-            MessageDigest digest = MessageDigest.getInstance("SHA-256");
-            String toHash = blobId + timestamp + privateKey;
-            byte[] hash = digest.digest(toHash.getBytes());
+        String toHash = org.apache.commons.codec.digest.DigestUtils.sha256Hex(blobId + timestamp + privateKey);
 
-            if (!verifier.equals(new String(hash)))
-                return Result.error(Result.ErrorCode.FORBIDDEN);
-
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-        return Result.ok();
-    }
-
-    public Result<Void> validateToken(String token) {
-        if (!token.equals(secret))
+        if (!verifier.equals(toHash))
             return Result.error(Result.ErrorCode.FORBIDDEN);
 
         return Result.ok();

@@ -13,9 +13,9 @@ public class RestBlobsResource extends RestResource implements RestBlobs {
     final Blobs impl;
     final String privateKey;
 
-    public RestBlobsResource(String secret, String privateKey) {
+    public RestBlobsResource(String privateKey) {
         this.privateKey = privateKey;
-        this.impl = new BlobServer(secret, privateKey);
+        this.impl = new BlobServer(privateKey);
     }
 
     @Override
@@ -31,8 +31,7 @@ public class RestBlobsResource extends RestResource implements RestBlobs {
     }
 
     @Override
-    public void delete(String blobId, String token) {
-        resultOrThrow(impl.validateToken(token));
+    public void delete(String blobId) {
         resultOrThrow(impl.delete(blobId));
     }
 

@@ -20,7 +20,6 @@ public class GrpcBlobsServer {
     public static void main(String[] args) throws Exception {
 
         //int index = args[0]
-        String token = args[1];
         String privateKey = args[2];
 
         var keyStore = System.getProperty("javax.net.ssl.keyStore");
@@ -34,7 +33,7 @@ public class GrpcBlobsServer {
         var keyManagerFactory = KeyManagerFactory.getInstance(KeyManagerFactory.getDefaultAlgorithm());
         keyManagerFactory.init(keystore, keyStorePassword.toCharArray());
 
-        GrpcBlobsServerStub stub = new GrpcBlobsServerStub(token, privateKey);
+        GrpcBlobsServerStub stub = new GrpcBlobsServerStub(privateKey);
 
         var sslContext = GrpcSslContexts.configure(SslContextBuilder.forServer(keyManagerFactory)).build();
         var server = NettyServerBuilder.forPort(PORT).addService(stub).sslContext(sslContext).build();

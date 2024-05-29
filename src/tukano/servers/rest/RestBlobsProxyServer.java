@@ -24,11 +24,10 @@ public class RestBlobsProxyServer {
 
             Boolean toClean = Boolean.parseBoolean(args[0]);
             //int index = args[1]
-            String token = args[2];
-            String privateKey = args[3];
+            String privateKey = args[2];
 
             ResourceConfig config = new ResourceConfig();
-            config.register(new RestBlobsProxyResource(toClean, token, privateKey));
+            config.register(new RestBlobsProxyResource(toClean, privateKey));
 
             String host = InetAddress.getLocalHost().getHostName();
             String serverURI = String.format(SERVER_URI_FMT, host, PORT);

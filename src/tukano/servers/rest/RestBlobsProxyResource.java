@@ -11,8 +11,8 @@ public class RestBlobsProxyResource extends RestResource implements RestBlobs {
 
     final Blobs impl;
 
-    public RestBlobsProxyResource(boolean cleanState, String secret, String privateKey) {
-        this.impl = new BlobProxyServer(cleanState, secret, privateKey);
+    public RestBlobsProxyResource(boolean cleanState, String privateKey) {
+        this.impl = new BlobProxyServer(cleanState, privateKey);
     }
 
     @Override
@@ -28,8 +28,7 @@ public class RestBlobsProxyResource extends RestResource implements RestBlobs {
     }
 
     @Override
-    public void delete(String blobId, String token) {
-        resultOrThrow(impl.validateToken(token));
+    public void delete(String blobId) {
         resultOrThrow(impl.delete(blobId));
     }
 

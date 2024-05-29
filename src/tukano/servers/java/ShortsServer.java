@@ -41,11 +41,9 @@ public class ShortsServer implements Shorts {
     private Map<URI, Integer> blobLoad = new ConcurrentHashMap<>();
     private static final int REPLICATION_CHECK_INTERVAL = 5000;
 
-    private final String token;
     private final String privateKey;
 
-    public ShortsServer(String token, String privateKey) {
-        this.token = token;
+    public ShortsServer(String privateKey) {
         this.privateKey = privateKey;
         replicationCheck();
     }
@@ -133,14 +131,14 @@ public class ShortsServer implements Shorts {
             return Result.error(uCheck.error());
 
         String[] blobs = minLoad();
-        Short s = new Short(userId, blobs);
+        Short s = new Short(userId, blobs);     //blobs FORMAT: https://hostname:port/rest/blobs/blobID ou grpc://hostname:port/grpc/blobs/blobID
 
         // Atualizar a carga do blob
         for(int i = 0; i < blobs.length; i++)
             blobLoad.put(URI.create(blobs[i]), blobLoad.get(URI.create(blobs[i])) + 1);
 
-        Hibernate.getInstance().persist(s);
-        return Result.ok(s);
+        Hibernate.getInstance().persist(s);     // URL1?verifier=xxxxx&timestamp=now|URL2?verifier=yyyyy&timestamp=now
+        return Result.ok(constructUrl(blobs, s));
     }
 
     @Override
@@ -432,6 +430,25 @@ public class ShortsServer implements Shorts {
         }
 
         return minLoad;
+    }
+
+    private Short constructUrl(String[] blobs, Short s) {
+        long now = System.currentTimeMillis();
+        String[] urls = new String[blobs.length];
+        String[] verifiers = new String[blobs.length];
+
+        for(int i = 0; i < blobs.length; i++) {
+            urls[i] = blobs[i] + RestBlobs.PATH + "/" + s.getShortId();
+            verifiers[i] = org.apache.commons.codec.digest.DigestUtils.sha256Hex(urls[i] + now + privateKey);
+            urls[i] += "?verifier=" + verifiers[i] + "&timestamp=" + now;
+        }
+
+        String finalURL = urls[0];
+        if(urls.length > 1)
+            finalURL += "|" + urls[1];
+        
+        s.setBlobUrl(finalURL);
+        return s;
     }
 
     private String[] getShortenBlobURL(Short s) {

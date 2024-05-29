@@ -44,11 +44,9 @@ public class BlobProxyServer implements Blobs {
     private final Gson json;
     private final OAuth20Service service;
     private final OAuth2AccessToken accessToken;
-    private final String secret;
     private final String privateKey;
     
-    public BlobProxyServer(Boolean cleanState, String secret, String privateKey) {
-        this.secret = secret;
+    public BlobProxyServer(Boolean cleanState, String privateKey) {
         this.privateKey = privateKey;
         json = new Gson();
         accessToken = new OAuth2AccessToken(accessTokenStr);
@@ -189,11 +187,4 @@ public class BlobProxyServer implements Blobs {
         return Result.ok();
     }
 
-    @Override
-    public Result<Void> validateToken(String token) {
-        if(!token.equals(secret))
-            return Result.error(Result.ErrorCode.FORBIDDEN);
-
-        return Result.ok();
-    }
 }

@@ -15,8 +15,8 @@ public class RestShortsResource extends RestResource implements RestShorts {
 
     final Shorts impl;
 
-    public RestShortsResource(String secret, String privateKey) {
-        this.impl = new ShortsServer(secret, privateKey);
+    public RestShortsResource(String privateKey) {
+        this.impl = new ShortsServer(privateKey);
     }
 
     @Override

@@ -58,5 +58,13 @@ public class RestBlobsClient extends RestClient implements Blobs {
     public Result<byte[]> download(String blobId) {
         return super.reTry(() -> clt_download(blobId));
     }
+
+    // ------------------- Unimplemented methods -------------------
+
+    @Override
+    public Result<Void> validateOperation(String blobId, String timestamp, String verifier) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'validateOperation'");
+    }
     
 }

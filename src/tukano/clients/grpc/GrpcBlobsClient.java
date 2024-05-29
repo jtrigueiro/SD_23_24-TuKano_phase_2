@@ -59,8 +59,6 @@ public class GrpcBlobsClient extends GrpcClient implements Blobs {
         });
     }
 
-    // ----------------- Unimplemented methods -----------------
-
     @Override
     public Result<Void> upload(String blobId, byte[] bytes) {
         return toJavaResult(() -> {
@@ -80,6 +78,14 @@ public class GrpcBlobsClient extends GrpcClient implements Blobs {
                     .build());
             return null;
         });
+    }
+
+    // ----------------- Unimplemented methods -----------------
+
+    @Override
+    public Result<Void> validateOperation(String blobId, String timestamp, String verifier) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'validateOperation'");
     }
 
 }

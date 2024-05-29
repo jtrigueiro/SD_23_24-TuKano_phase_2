@@ -20,12 +20,10 @@ public class RestUsersServer {
 
 	public static void main(String[] args) {
 
-		String token = args[0];
-
 		try {
 
 			ResourceConfig config = new ResourceConfig();
-			config.register(new RestUsersResource(token));
+			config.register(RestUsersResource.class);
 
 			String ip = InetAddress.getLocalHost().getHostName();
 			String serverURI = String.format(SERVER_URI_FMT, ip, PORT);

@@ -22,11 +22,10 @@ public class RestBlobsServer {
 	public static void main(String[] args) {
 		try {
 			//int index = args[0]
-			String token = args[1];
-			String privateKey = args[2];
+			String privateKey = args[1];
 
 			ResourceConfig config = new ResourceConfig();
-			config.register(new RestBlobsResource(token, privateKey));
+			config.register(new RestBlobsResource(privateKey));
 
 			String host = InetAddress.getLocalHost().getHostName();
 			String serverURI = String.format(SERVER_URI_FMT, host, PORT);

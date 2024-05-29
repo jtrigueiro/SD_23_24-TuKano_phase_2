@@ -1,5 +1,7 @@
 package tukano.servers.grpc;
 
+import java.net.URI;
+
 import com.google.protobuf.ByteString;
 
 import io.grpc.BindableService;
@@ -21,8 +23,8 @@ import tukano.impl.grpc.generated_java.BlobsProtoBuf.UploadResult;
 public class GrpcBlobsServerStub implements BlobsGrpc.AsyncService, BindableService {
     final Blobs impl;
 
-    public GrpcBlobsServerStub(String secret, String privateKey) {
-        this.impl = new BlobServer(secret, privateKey);
+    public GrpcBlobsServerStub(String privateKey) {
+        this.impl = new BlobServer(privateKey);
     }
 
     @Override
@@ -32,6 +34,9 @@ public class GrpcBlobsServerStub implements BlobsGrpc.AsyncService, BindableServ
 
     @Override
     public void upload(UploadArgs request, StreamObserver<UploadResult> responseObserver) {
+        if (!validateOperation(request.getBlobId()))
+            responseObserver.onError(errorCodeToStatus(Result.ErrorCode.FORBIDDEN));
+
         var res = impl.upload(request.getBlobId(), request.getData().toByteArray());
         if (!res.isOK())
             responseObserver.onError(errorCodeToStatus(res.error()));
@@ -43,6 +48,9 @@ public class GrpcBlobsServerStub implements BlobsGrpc.AsyncService, BindableServ
 
     @Override
     public void download(DownloadArgs request, StreamObserver<DownloadResult> responseObserver) {
+        if (!validateOperation(request.getBlobId()))
+            responseObserver.onError(errorCodeToStatus(Result.ErrorCode.FORBIDDEN));
+
         var res = impl.download(request.getBlobId());
         if (!res.isOK())
             responseObserver.onError(errorCodeToStatus(res.error()));
@@ -60,6 +68,23 @@ public class GrpcBlobsServerStub implements BlobsGrpc.AsyncService, BindableServ
         else {
             responseObserver.onNext(DeleteResult.newBuilder().build());
             responseObserver.onCompleted();
+        }
+    }
+
+    private boolean validateOperation(String blobUrl) {
+        try {               // FORMAT:  grpc://hostname:8080/grpc/blobs/blobID?verifier=xxxxx&timestamp=xxxxx
+            URI uri = new URI(blobUrl);
+            String[] params = uri.getQuery().split("&");
+
+            String blobId = blobUrl.split("?")[0];
+            String verifier = params[0].split("=")[1];
+            String timestamp = params[1].split("=")[1];
+
+            var res = impl.validateOperation(blobId, timestamp, verifier);
+            return res.isOK();
+
+        } catch (Exception e) {
+            return false;
         }
     }
 

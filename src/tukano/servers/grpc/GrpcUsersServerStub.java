@@ -28,8 +28,8 @@ public class GrpcUsersServerStub implements UsersGrpc.AsyncService, BindableServ
 
     Users impl;
 
-    public GrpcUsersServerStub(String token) {
-        impl = new UsersServer(token);
+    public GrpcUsersServerStub() {
+        impl = new UsersServer();
     }
 
     @Override
