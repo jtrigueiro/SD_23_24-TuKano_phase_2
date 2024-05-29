@@ -26,7 +26,11 @@ import static tukano.impl.grpc.common.DataModelAdaptor.User_to_GrpcUser;
 
 public class GrpcUsersServerStub implements UsersGrpc.AsyncService, BindableService {
 
-    Users impl = new UsersServer();
+    Users impl;
+
+    public GrpcUsersServerStub(String token) {
+        impl = new UsersServer(token);
+    }
 
     @Override
     public final ServerServiceDefinition bindService() {

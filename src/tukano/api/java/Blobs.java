@@ -61,4 +61,8 @@ public interface Blobs {
 	 *         NOT_FOUND if the blobId does not match an existing blob
 	 */
 	Result<Void> delete(String blobId);
+
+    Result<Void> validateOperation(String blobId, String timestamp, String verifier);
+
+	Result<Void> validateToken(String token);
 }

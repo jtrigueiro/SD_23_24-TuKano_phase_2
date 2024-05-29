@@ -1,5 +1,7 @@
 package tukano.servers.java;
 
+import java.security.MessageDigest;
+
 import org.pac4j.scribe.builder.api.DropboxApi20;
 import com.github.scribejava.core.builder.ServiceBuilder;
 import com.github.scribejava.core.model.OAuth2AccessToken;
@@ -42,26 +44,18 @@ public class BlobProxyServer implements Blobs {
     private final Gson json;
     private final OAuth20Service service;
     private final OAuth2AccessToken accessToken;
-
-    // private final Path storagePath;
-
-    public BlobProxyServer(Boolean cleanState) {
+    private final String secret;
+    private final String privateKey;
+    
+    public BlobProxyServer(Boolean cleanState, String secret, String privateKey) {
+        this.secret = secret;
+        this.privateKey = privateKey;
         json = new Gson();
         accessToken = new OAuth2AccessToken(accessTokenStr);
         service = new ServiceBuilder(apiKey).apiSecret(apiSecret).build(DropboxApi20.INSTANCE);
         if (cleanState)
             deleteFolder(ROOT_FOLDER);
         createFolder(ROOT_FOLDER);
-
-        // storagePath = Paths.get("src/tukano/servers/java/blobs");
-
-        // try {
-        // Files.createDirectories(storagePath);
-
-        // } catch (IOException e) {
-        // throw new RuntimeException(e);
-
-        // }
     }
 
     @Override
@@ -72,39 +66,6 @@ public class BlobProxyServer implements Blobs {
         // Check if the blobId is verified
         if (!bCheck.isOK())
             return Result.error(Result.ErrorCode.FORBIDDEN);
-
-        // Path filePath = storagePath.resolve(blobId);
-
-        // if (Files.exists(filePath)) {
-        // byte[] fileBytes;
-
-        // try {
-        // fileBytes = Files.readAllBytes(filePath);
-
-        // } catch (IOException e) {
-        // return Result.error(Result.ErrorCode.CONFLICT);
-
-        // }
-
-        // if (fileBytes.length != bytes.length)
-        // Result.error(Result.ErrorCode.CONFLICT);
-
-        // for (int i = 0; i < fileBytes.length; i++) {
-
-        // // Check for bytes mismatch
-        // if (fileBytes[i] != bytes[i])
-        // return Result.error(Result.ErrorCode.CONFLICT);
-        // }
-
-        // } else {
-        // try {
-        // Files.write(filePath, bytes);
-
-        // } catch (IOException e) {
-        // return Result.error(Result.ErrorCode.CONFLICT);
-
-        // }
-        // }
 
         Result<byte[]> check = download(blobId);
 
@@ -144,19 +105,6 @@ public class BlobProxyServer implements Blobs {
 
     @Override
     public Result<byte[]> download(String blobId) {
-        // Path filePath = storagePath.resolve(blobId);
-
-        // if (Files.exists(filePath)) {
-        // try {
-        // byte[] data = Files.readAllBytes(filePath); // Read bytes from file
-        // return Result.ok(data);
-
-        // } catch (IOException e) {
-        // return Result.error(Result.ErrorCode.CONFLICT);
-
-        // }
-        // } else
-        // return Result.error(Result.ErrorCode.NOT_FOUND);
 
         var downloadFile = new OAuthRequest(Verb.POST, DOWNLOAD_FILE_URL);
         downloadFile.addHeader(DROPBOX_API_ARG_HDR, json.toJson(new DownloadFileArgs(ROOT_FOLDER + "/" + blobId)));
@@ -177,18 +125,6 @@ public class BlobProxyServer implements Blobs {
 
     @Override
     public Result<Void> delete(String blobId) {
-        // Path filePath = storagePath.resolve(blobId);
-
-        // if (filePath.toFile().exists()) {
-        // try {
-        // Files.delete(filePath);
-
-        // } catch (IOException e) {
-        // return Result.error(Result.ErrorCode.CONFLICT);
-
-        // }
-        // } else
-        // return Result.error(Result.ErrorCode.NOT_FOUND);
 
         var deleteFile = new OAuthRequest(Verb.POST, DELETE_FILE_V2_URL);
         deleteFile.addHeader(CONTENT_TYPE_HDR, JSON_CONTENT_TYPE);
@@ -234,5 +170,30 @@ public class BlobProxyServer implements Blobs {
             service.execute(deleteFolder);
         } catch (Exception e) {
         }
+    }
+
+    @Override
+    public Result<Void> validateOperation(String blobId, String timestamp, String verifier) {
+        try {
+            MessageDigest digest = MessageDigest.getInstance("SHA-256");
+            String toHash = blobId + timestamp + privateKey;
+            byte[] hash = digest.digest(toHash.getBytes());
+
+            if (!verifier.equals(new String(hash)))
+                return Result.error(Result.ErrorCode.FORBIDDEN);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return Result.ok();
+    }
+
+    @Override
+    public Result<Void> validateToken(String token) {
+        if(!token.equals(secret))
+            return Result.error(Result.ErrorCode.FORBIDDEN);
+
+        return Result.ok();
     }
 }

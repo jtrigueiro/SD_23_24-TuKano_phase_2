@@ -18,6 +18,9 @@ public class GrpcShortsServer {
     private static final String GRPC_CTX = "/gprc";
 
     public static void main(String[] args) throws Exception {
+        String token = args[0];
+        String privateKey = args[1];
+
         var keyStore = System.getProperty("javax.net.ssl.keyStore");
         var keyStorePassword = System.getProperty("javax.net.ssl.keyStorePassword");
 
@@ -29,7 +32,7 @@ public class GrpcShortsServer {
         var keyManagerFactory = KeyManagerFactory.getInstance(KeyManagerFactory.getDefaultAlgorithm());
         keyManagerFactory.init(keystore, keyStorePassword.toCharArray());
 
-        var stub = new GrpcShortsServerStub();
+        var stub = new GrpcShortsServerStub(token, privateKey);
 
         var sslContext = GrpcSslContexts.configure(SslContextBuilder.forServer(keyManagerFactory)).build();
         var server = NettyServerBuilder.forPort(PORT).addService(stub).sslContext(sslContext).build();

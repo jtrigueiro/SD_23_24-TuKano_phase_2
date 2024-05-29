@@ -39,8 +39,14 @@ public class ShortsServer implements Shorts {
     private static String followsByUserId = "SELECT f FROM Follows f WHERE f.userId2 = '%s' OR f.userId1 = '%s'";
 
     private Map<URI, Integer> blobLoad = new ConcurrentHashMap<>();
+    private static final int REPLICATION_CHECK_INTERVAL = 5000;
 
-    public ShortsServer() {
+    private final String token;
+    private final String privateKey;
+
+    public ShortsServer(String token, String privateKey) {
+        this.token = token;
+        this.privateKey = privateKey;
         replicationCheck();
     }
 
@@ -53,7 +59,7 @@ public class ShortsServer implements Shorts {
         new Thread(() -> {
             while(true) {
                 try {
-                    Thread.sleep(5000);
+                    Thread.sleep(REPLICATION_CHECK_INTERVAL);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
@@ -130,8 +136,8 @@ public class ShortsServer implements Shorts {
         Short s = new Short(userId, blobs);
 
         // Atualizar a carga do blob
-        blobLoad.put(URI.create(blobs[0]), blobLoad.get(URI.create(blobs[0])) + 1);
-        blobLoad.put(URI.create(blobs[1]), blobLoad.get(URI.create(blobs[1])) + 1);
+        for(int i = 0; i < blobs.length; i++)
+            blobLoad.put(URI.create(blobs[i]), blobLoad.get(URI.create(blobs[i])) + 1);
 
         Hibernate.getInstance().persist(s);
         return Result.ok(s);
@@ -404,7 +410,8 @@ public class ShortsServer implements Shorts {
     }
 
     private String[] minLoad() {
-        String[] minLoad = new String[2];
+        int i = Math.min(2, blobLoad.size());
+        String[] minLoad = new String[i];
 
         int min = Integer.MAX_VALUE;
         for(Map.Entry<URI, Integer> entry : blobLoad.entrySet()) {
@@ -414,11 +421,13 @@ public class ShortsServer implements Shorts {
             }
         }
 
-        min = Integer.MAX_VALUE;
-        for(Map.Entry<URI, Integer> entry : blobLoad.entrySet()) {
-            if(entry.getValue() < min && !entry.getKey().toString().equals(minLoad[0])) {
-                min = entry.getValue();
-                minLoad[1] = entry.getKey().toString();
+        if(i == 2) {
+            min = Integer.MAX_VALUE;
+            for(Map.Entry<URI, Integer> entry : blobLoad.entrySet()) {
+                if(entry.getValue() < min && !entry.getKey().toString().equals(minLoad[0])) {
+                    min = entry.getValue();
+                    minLoad[1] = entry.getKey().toString();
+                }
             }
         }
 

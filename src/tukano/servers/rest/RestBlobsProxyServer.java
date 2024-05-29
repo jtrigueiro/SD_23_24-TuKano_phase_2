@@ -22,12 +22,13 @@ public class RestBlobsProxyServer {
     public static void main(String[] args) {
         try {
 
-            ResourceConfig config = new ResourceConfig();
+            Boolean toClean = Boolean.parseBoolean(args[0]);
+            //int index = args[1]
+            String token = args[2];
+            String privateKey = args[3];
 
-            if (args[0].toLowerCase().equals("true"))
-                config.register(new RestBlobsProxyResource(true));
-            else
-                config.register(new RestBlobsProxyResource(false));
+            ResourceConfig config = new ResourceConfig();
+            config.register(new RestBlobsProxyResource(toClean, token, privateKey));
 
             String host = InetAddress.getLocalHost().getHostName();
             String serverURI = String.format(SERVER_URI_FMT, host, PORT);

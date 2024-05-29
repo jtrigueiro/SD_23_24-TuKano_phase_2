@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.security.MessageDigest;
 
 import tukano.api.java.Blobs;
 import tukano.api.java.Result;
@@ -13,8 +14,12 @@ import tukano.clients.ClientFactory;
 public class BlobServer implements Blobs {
 
     private final Path storagePath;
+    private final String secret;
+    private final String privateKey;
 
-    public BlobServer() {
+    public BlobServer(String secret, String privateKey) {
+        this.secret = secret;
+        this.privateKey = privateKey;
         storagePath = Paths.get("").toAbsolutePath();
 
         try {
@@ -28,12 +33,12 @@ public class BlobServer implements Blobs {
 
     @Override
     public Result<Void> upload(String blobId, byte[] bytes) {
-        Shorts client = ClientFactory.getShortsClient();
-        Result<Void> bCheck = client.checkBlobId(blobId);
+            Shorts client = ClientFactory.getShortsClient();
+            Result<Void> bCheck = client.checkBlobId(blobId);
 
-        // Check if the blobId is verified
-        if (!bCheck.isOK())
-            return Result.error(Result.ErrorCode.FORBIDDEN);
+            // Check if the blobId is verified
+            if (!bCheck.isOK())
+                return Result.error(Result.ErrorCode.FORBIDDEN);
 
         Path filePath = storagePath.resolve(blobId);
 
@@ -101,6 +106,29 @@ public class BlobServer implements Blobs {
             }
         } else
             return Result.error(Result.ErrorCode.NOT_FOUND);
+
+        return Result.ok();
+    }
+
+    public Result<Void> validateOperation(String blobId, String timestamp, String verifier) {
+        try {
+            MessageDigest digest = MessageDigest.getInstance("SHA-256");
+            String toHash = blobId + timestamp + privateKey;
+            byte[] hash = digest.digest(toHash.getBytes());
+
+            if (!verifier.equals(new String(hash)))
+                return Result.error(Result.ErrorCode.FORBIDDEN);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return Result.ok();
+    }
+
+    public Result<Void> validateToken(String token) {
+        if (!token.equals(secret))
+            return Result.error(Result.ErrorCode.FORBIDDEN);
 
         return Result.ok();
     }

@@ -39,7 +39,11 @@ import static tukano.impl.grpc.common.DataModelAdaptor.Short_to_GrpcShort;
 
 public class GrpcShortsServerStub implements ShortsGrpc.AsyncService, BindableService {
 
-    Shorts impl = new ShortsServer();
+    Shorts impl;
+
+    public GrpcShortsServerStub(String secret, String privateKey) {
+        this.impl = new ShortsServer(secret, privateKey);
+    }
 
     @Override
     public ServerServiceDefinition bindService() {

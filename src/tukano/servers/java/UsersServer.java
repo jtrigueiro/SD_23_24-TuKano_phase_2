@@ -15,7 +15,10 @@ public class UsersServer implements Users {
 	private static String userByUserId = "SELECT u FROM User u WHERE u.userId = '%s'";
 	private static String allUsers = "SELECT u FROM User u";
 
-	public UsersServer() {
+	private final String secret;
+
+	public UsersServer(String secret) {
+		this.secret = secret;
 	}
 
 	@Override

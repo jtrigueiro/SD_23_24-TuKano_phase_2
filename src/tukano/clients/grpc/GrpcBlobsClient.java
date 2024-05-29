@@ -6,6 +6,8 @@ import java.security.KeyStore;
 
 import javax.net.ssl.TrustManagerFactory;
 
+import com.google.protobuf.ByteString;
+
 import io.grpc.netty.GrpcSslContexts;
 import io.grpc.netty.NettyChannelBuilder;
 import io.netty.handler.ssl.SslContextBuilder;
@@ -13,6 +15,8 @@ import tukano.api.java.Blobs;
 import tukano.api.java.Result;
 import tukano.impl.grpc.generated_java.BlobsGrpc;
 import tukano.impl.grpc.generated_java.BlobsProtoBuf.DeleteArgs;
+import tukano.impl.grpc.generated_java.BlobsProtoBuf.DownloadArgs;
+import tukano.impl.grpc.generated_java.BlobsProtoBuf.UploadArgs;
 import tukano.impl.grpc.generated_java.BlobsGrpc.BlobsBlockingStub;
 
 public class GrpcBlobsClient extends GrpcClient implements Blobs {
@@ -59,14 +63,23 @@ public class GrpcBlobsClient extends GrpcClient implements Blobs {
 
     @Override
     public Result<Void> upload(String blobId, byte[] bytes) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'upload'");
+        return toJavaResult(() -> {
+            stub.upload(UploadArgs.newBuilder()
+                    .setBlobId(blobId)
+                    .setBlobIdBytes(ByteString.copyFrom(bytes))
+                    .build());
+            return null;
+        });
     }
 
     @Override
     public Result<byte[]> download(String blobId) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'download'");
+        return toJavaResult(() -> {
+            stub.download(DownloadArgs.newBuilder()
+                    .setBlobId(blobId)
+                    .build());
+            return null;
+        });
     }
 
 }
