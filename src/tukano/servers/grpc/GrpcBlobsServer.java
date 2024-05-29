@@ -20,7 +20,7 @@ public class GrpcBlobsServer {
     public static void main(String[] args) throws Exception {
 
         // int index = args[0]
-        String privateKey = args[2];
+        String privateKey = args[1];
 
         var keyStore = System.getProperty("javax.net.ssl.keyStore");
         var keyStorePassword = System.getProperty("javax.net.ssl.keyStorePassword");

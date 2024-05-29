@@ -8,8 +8,8 @@ import java.nio.file.Paths;
 import tukano.api.java.Blobs;
 import tukano.api.java.Result;
 import tukano.api.java.Shorts;
+import tukano.api.rest.RestBlobs;
 import tukano.clients.ClientFactory;
-import tukano.utils.Hibernate;
 
 public class BlobServer implements Blobs {
 
@@ -111,7 +111,7 @@ public class BlobServer implements Blobs {
 
     public Result<Void> validateOperation(String blobId, String timestamp, String verifier) {
         String toHash = org.apache.commons.codec.digest.DigestUtils
-                .sha256Hex(serverURI + "/blobs/" + blobId + timestamp + privateKey);
+                .sha256Hex(serverURI + RestBlobs.PATH + "/" + blobId + timestamp + privateKey);
 
         if (!verifier.equals(toHash)) {
             return Result.error(Result.ErrorCode.FORBIDDEN);

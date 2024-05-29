@@ -140,6 +140,10 @@ public class ShortsServer implements Shorts {
             blobLoad.put(URI.create(blobs[i]), blobLoad.get(URI.create(blobs[i])) + 1);
 
         Hibernate.getInstance().persist(s); // URL1?verifier=xxxxx&timestamp=now|URL2?verifier=yyyyy&timestamp=now
+
+        for(int i = 0; i < blobs.length; i++)
+            blobs[i] += RestBlobs.PATH + "/" + s.getShortId();
+
         return Result.ok(constructUrl(blobs, s));
     }
 
@@ -435,11 +439,10 @@ public class ShortsServer implements Shorts {
 
     private Short constructUrl(String[] blobs, Short s) {
         long timestamp = System.currentTimeMillis();
-        String[] urls = new String[blobs.length];
+        String[] urls = blobs;
         String[] verifiers = new String[blobs.length];
 
         for (int i = 0; i < blobs.length; i++) {
-            urls[i] = blobs[i] + RestBlobs.PATH + "/" + s.getShortId();
             verifiers[i] = org.apache.commons.codec.digest.DigestUtils.sha256Hex(urls[i] + timestamp + privateKey);
             urls[i] += "?verifier=" + verifiers[i] + "&timestamp=" + timestamp;
         }
