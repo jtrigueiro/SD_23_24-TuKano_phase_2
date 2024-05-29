@@ -35,7 +35,7 @@ public class GrpcBlobsServerStub implements BlobsGrpc.AsyncService, BindableServ
         if (!validateOperation(request.getBlobId()))
             responseObserver.onError(errorCodeToStatus(Result.ErrorCode.FORBIDDEN));
 
-        var res = impl.upload(request.getBlobId().split("?")[0], request.getData().toByteArray());
+        var res = impl.upload(request.getBlobId().split("\\?")[0], request.getData().toByteArray());
         if (!res.isOK())
             responseObserver.onError(errorCodeToStatus(res.error()));
         else {
@@ -49,7 +49,7 @@ public class GrpcBlobsServerStub implements BlobsGrpc.AsyncService, BindableServ
         if (!validateOperation(request.getBlobId()))
             responseObserver.onError(errorCodeToStatus(Result.ErrorCode.FORBIDDEN));
 
-        var res = impl.download(request.getBlobId().split("?")[0]);
+        var res = impl.download(request.getBlobId().split("\\?")[0]);
         if (!res.isOK())
             responseObserver.onError(errorCodeToStatus(res.error()));
         else {
@@ -71,8 +71,8 @@ public class GrpcBlobsServerStub implements BlobsGrpc.AsyncService, BindableServ
 
     private boolean validateOperation(String blobUrl) {
         try { // FORMAT: grpc://hostname:8080/grpc/blobs/blobID?verifier=xxxxx&timestamp=xxxxx
-            //URI uri = new URI(blobUrl);
-            //String[] params = uri.getQuery().split("&");
+              // URI uri = new URI(blobUrl);
+              // String[] params = uri.getQuery().split("&");
 
             String[] parts = blobUrl.split("\\?");
             String[] params = parts[1].split("&");
