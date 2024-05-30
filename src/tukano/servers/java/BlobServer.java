@@ -19,10 +19,10 @@ public class BlobServer implements Blobs {
     private final String privateKey, serverURI;
 
     public BlobServer() {
-        Token.set( Args.valueOf("-token", ""));
+        Token.set(Args.valueOf("-token", ""));
         this.privateKey = Args.valueOf("-secret", "");
         this.serverURI = Args.valueOf("-serverURI", "");
-        
+
         storagePath = Paths.get("").toAbsolutePath();
 
         try {
@@ -114,6 +114,10 @@ public class BlobServer implements Blobs {
     }
 
     public Result<Void> validateOperation(String blobId, String timestamp, String verifier) {
+        long time = Long.parseLong(timestamp);
+        if (Math.abs(System.currentTimeMillis() - time) > 10000)
+            return Result.error(Result.ErrorCode.FORBIDDEN);
+
         String toHash = org.apache.commons.codec.digest.DigestUtils
                 .sha256Hex(serverURI + RestBlobs.PATH + "/" + blobId + timestamp + privateKey);
 
@@ -126,7 +130,7 @@ public class BlobServer implements Blobs {
 
     @Override
     public Result<Void> validateOperation(String token) {
-        if(Token.matches(token))
+        if (Token.matches(token))
             return Result.ok();
         else
             return Result.error(Result.ErrorCode.FORBIDDEN);
