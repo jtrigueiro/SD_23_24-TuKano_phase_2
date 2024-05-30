@@ -17,6 +17,7 @@ public class RestBlobsClient extends RestClient implements Blobs {
     public Result<Void> svr_delete(String blobId, String token) {
         return super.toJavaResult(
                 target.path(blobId)
+                        .path(RestBlobs.SERVER)
                         .queryParam(RestBlobs.TOKEN, token)
                         .request()
                         .delete(),
@@ -26,6 +27,7 @@ public class RestBlobsClient extends RestClient implements Blobs {
     public Result<Void> svr_upload(String blobId, byte[] bytes, String token) {
         return super.toJavaResult(
                 target.path(blobId)
+                        .path(RestBlobs.SERVER)
                         .queryParam(RestBlobs.TOKEN, token)
                         .request()
                         .post(Entity.entity(bytes, MediaType.APPLICATION_OCTET_STREAM)),

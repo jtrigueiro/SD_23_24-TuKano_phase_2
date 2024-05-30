@@ -18,6 +18,7 @@ public interface RestBlobs {
 	String TIMESTAMP = "timestamp";
 	String TOKEN = "token";
 	String BLOB_ID = "blobId";
+	String SERVER = "server";
 
 	@POST
 	@Path("{" + BLOB_ID + "}")
@@ -26,7 +27,7 @@ public interface RestBlobs {
 			@QueryParam(VERIFIER) String verifier);
 
 	@POST
-	@Path("{" + BLOB_ID + "}")
+	@Path("{" + BLOB_ID + "}" + SERVER)
 	@Consumes(MediaType.APPLICATION_OCTET_STREAM)
 	void svr_upload(@PathParam(BLOB_ID) String blobId, byte[] bytes, @QueryParam(TOKEN) String token);
 
@@ -37,7 +38,7 @@ public interface RestBlobs {
 			@QueryParam(TIMESTAMP) String timestamp, @QueryParam(VERIFIER) String verifier);
 
 	@GET
-	@Path("{" + BLOB_ID + "}")
+	@Path("{" + BLOB_ID + "}" + SERVER)
 	@Produces(MediaType.APPLICATION_OCTET_STREAM)
 	byte[] svr_download(@PathParam(BLOB_ID) String blobId,
 			@QueryParam(TOKEN) String token);
