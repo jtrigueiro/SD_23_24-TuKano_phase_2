@@ -16,7 +16,7 @@ public class RestBlobsClient extends RestClient implements Blobs {
 
     public Result<Void> svr_delete(String blobId, String token) {
         return super.toJavaResult(
-                target.path(blobId + RestBlobs.SERVER)
+                target.path(blobId)
                         .queryParam(RestBlobs.TOKEN, token)
                         .request()
                         .delete(),

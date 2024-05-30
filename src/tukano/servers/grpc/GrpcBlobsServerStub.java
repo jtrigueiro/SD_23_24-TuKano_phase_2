@@ -57,6 +57,40 @@ public class GrpcBlobsServerStub implements BlobsGrpc.AsyncService, BindableServ
             responseObserver.onCompleted();
         }
     }
+    /*
+     * @Override
+     * public void serverUpload(ServerUploadArgs request,
+     * StreamObserver<ServerUploadResult> responseObserver) {
+     * if (!validateOperation(request.getBlobId()))
+     * responseObserver.onError(errorCodeToStatus(Result.ErrorCode.FORBIDDEN));
+     * 
+     * var res = impl.upload(request.getBlobId().split("\\?")[0],
+     * request.getData().toByteArray());
+     * if (!res.isOK())
+     * responseObserver.onError(errorCodeToStatus(res.error()));
+     * else {
+     * responseObserver.onNext(ServerUploadResult.newBuilder().build());
+     * responseObserver.onCompleted();
+     * }
+     * }
+     * 
+     * @Override
+     * public void serverDownload(ServerDownloadArgs request,
+     * StreamObserver<ServerDownloadResult> responseObserver) {
+     * if (!validateOperation(request.getBlobId()))
+     * responseObserver.onError(errorCodeToStatus(Result.ErrorCode.FORBIDDEN));
+     * 
+     * var res = impl.download(request.getBlobId().split("\\?")[0]);
+     * if (!res.isOK())
+     * responseObserver.onError(errorCodeToStatus(res.error()));
+     * else {
+     * responseObserver
+     * .onNext(ServerDownloadResult.newBuilder().setChunk(ByteString.copyFrom(res.
+     * value())).build());
+     * responseObserver.onCompleted();
+     * }
+     * }
+     */
 
     @Override
     public void delete(DeleteArgs request, StreamObserver<DeleteResult> responseObserver) {

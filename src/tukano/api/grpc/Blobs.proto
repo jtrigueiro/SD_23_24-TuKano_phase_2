@@ -10,6 +10,10 @@ service Blobs {
 	rpc download( DownloadArgs ) returns ( stream DownloadResult ) {}
 
 	rpc delete( DeleteArgs ) returns ( DeleteResult ) {}
+
+	rpc serverDownload( ServerDownloadArgs ) returns ( stream ServerDownloadResult ) {}
+
+	rpc serverUpload( ServerUploadArgs ) returns ( ServerUploadResult ) {}
 	
 }
 
@@ -31,6 +35,26 @@ message DownloadResult {
 
 message DeleteArgs {
 	 string blobId = 1;
+	 string token = 2;
 }
 
 message DeleteResult {}
+
+message ServerDonwloadArgs {
+	 string blobId = 1;
+	 string token = 2;
+}
+
+message ServerUploadArgs {
+	 string blobId = 1;
+	 bytes data = 2;
+	 string token = 3;
+}
+
+message ServerDownloadResult {
+	bytes chunk = 1;
+}
+
+message ServerUploadResult {
+}
+
