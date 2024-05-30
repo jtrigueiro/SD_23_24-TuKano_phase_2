@@ -46,7 +46,7 @@ public class ShortsServer implements Shorts {
     private final String privateKey;
 
     public ShortsServer() {
-        Token.set( Args.valueOf("-token", ""));
+        Token.set(Args.valueOf("-token", ""));
         this.privateKey = Args.valueOf("-secret", "");
 
         replicationCheck();
@@ -89,12 +89,12 @@ public class ShortsServer implements Shorts {
             clients.put(uri, ClientFactory.getBlobsClient(uri));
 
         for (Short s : shorts) {
-            
+
             if (s.getBlobUrl().contains(blobURI.toString())) {
-                
+
                 for (String url : getShortenBlobURL(s)) { // [BLOBAPAGADO, BLOBDOWNLOAD] OU [BLOBORIGEM, BLOBAPAGADO]
                     if (!blobURI.toString().equals(url)) {
-                        
+
                         Result<byte[]> bytes = clients.get(URI.create(url)).download(s.getShortId(), Token.get());
 
                         if (bytes.isOK()) {
@@ -103,7 +103,8 @@ public class ShortsServer implements Shorts {
                                 // Se for diferente do blob apagado e do blob de origem
                                 if (!uri.toString().equals(url) && !uri.toString().equals(blobURI.toString())) {
 
-                                    Result<Void> upload = clients.get(uri).upload(s.getShortId(), bytes.value(), Token.get());
+                                    Result<Void> upload = clients.get(uri).upload(s.getShortId(), bytes.value(),
+                                            Token.get());
 
                                     if (upload.isOK()) {
                                         // Atualizar a carga do blob
@@ -171,7 +172,7 @@ public class ShortsServer implements Shorts {
 
         for (String url : shortenURL) {
             Blobs client2 = ClientFactory.getBlobsClient(URI.create(url));
-            Result<Void> deleteBlob = client2.delete(s.getShortId());
+            Result<Void> deleteBlob = client2.delete(s.getShortId(), Token.get());
 
             // Check if the blob was deleted
             if (!deleteBlob.isOK() && !deleteBlob.error().equals(Result.ErrorCode.NOT_FOUND))
@@ -364,7 +365,7 @@ public class ShortsServer implements Shorts {
         for (Short s : shorts) {
             for (String url : getShortenBlobURL(s)) {
                 Blobs client = ClientFactory.getBlobsClient(URI.create(url));
-                Result<Void> delete = client.delete(s.getShortId());
+                Result<Void> delete = client.delete(s.getShortId(), Token.get());
 
                 // Check if the blob was deleted
                 if (!delete.isOK())
