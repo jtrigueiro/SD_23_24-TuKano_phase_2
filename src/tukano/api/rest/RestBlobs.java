@@ -18,7 +18,7 @@ public interface RestBlobs {
 	String TIMESTAMP = "timestamp";
 	String TOKEN = "token";
 	String BLOB_ID = "blobId";
-	String SERVER = "server";
+	String SERVER = "/server";
 
 	@POST
 	@Path("{" + BLOB_ID + "}")
