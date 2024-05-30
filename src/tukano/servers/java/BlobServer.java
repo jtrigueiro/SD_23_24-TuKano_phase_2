@@ -124,4 +124,32 @@ public class BlobServer implements Blobs {
         return Result.ok();
     }
 
+    @Override
+    public Result<Void> validateOperation(String token) {
+        if(Token.matches(token))
+            return Result.ok();
+        else
+            return Result.error(Result.ErrorCode.FORBIDDEN);
+    }
+
+    // ------------------- Unimplemented Methods -------------------
+
+    @Override
+    public Result<Void> upload(String blobId, byte[] bytes, String token) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'upload'");
+    }
+
+    @Override
+    public Result<byte[]> download(String blobId, String token) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'download'");
+    }
+
+    @Override
+    public Result<Void> delete(String blobId, String token) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'delete'");
+    }
+
 }

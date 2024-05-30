@@ -60,4 +60,28 @@ public class GrpcBlobsClient extends GrpcClient implements Blobs {
         throw new UnsupportedOperationException("Unimplemented method 'validateOperation'");
     }
 
+    @Override
+    public Result<Void> validateOperation(String token) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'validateOperation'");
+    }
+
+    @Override
+    public Result<Void> upload(String blobId, byte[] bytes, String token) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'upload'");
+    }
+
+    @Override
+    public Result<byte[]> download(String blobId, String token) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'download'");
+    }
+
+    @Override
+    public Result<Void> delete(String blobId, String token) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'delete'");
+    }
+
 }

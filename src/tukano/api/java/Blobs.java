@@ -62,5 +62,15 @@ public interface Blobs {
 	 */
 	Result<Void> delete(String blobId);
 
+	Result<Void> validateOperation(String token);
+
     Result<Void> validateOperation(String blobId, String timestamp, String verifier);
+
+	// ------------------- Client Methods -------------------
+
+	Result<Void> upload(String blobId, byte[] bytes, String token);
+
+	Result<byte[]> download(String blobId, String token);
+
+	Result<Void> delete(String blobId, String token);
 }

@@ -16,6 +16,7 @@ public interface RestBlobs {
 	String PATH = "/blobs";
 	String VERIFIER = "verifier";
 	String TIMESTAMP = "timestamp";
+	String TOKEN = "token";
 	String BLOB_ID = "blobId";
 
 	@POST
@@ -24,13 +25,24 @@ public interface RestBlobs {
 	void upload(@PathParam(BLOB_ID) String blobId, byte[] bytes, @QueryParam(TIMESTAMP) String timestamp,
 			@QueryParam(VERIFIER) String verifier);
 
+	@POST
+	@Path("{" + BLOB_ID + "}")
+	@Consumes(MediaType.APPLICATION_OCTET_STREAM)
+	void upload(@PathParam(BLOB_ID) String blobId, byte[] bytes, @QueryParam(TOKEN) String token);
+
 	@GET
 	@Path("{" + BLOB_ID + "}")
 	@Produces(MediaType.APPLICATION_OCTET_STREAM)
 	byte[] download(@PathParam(BLOB_ID) String blobId,
 			@QueryParam(TIMESTAMP) String timestamp, @QueryParam(VERIFIER) String verifier);
 
+	@GET
+	@Path("{" + BLOB_ID + "}")
+	@Produces(MediaType.APPLICATION_OCTET_STREAM)
+	byte[] download(@PathParam(BLOB_ID) String blobId,
+			@QueryParam(TOKEN) String token);
+
 	@DELETE
 	@Path("{" + BLOB_ID + "}")
-	void delete(@PathParam(BLOB_ID) String blobId);
+	void delete(@PathParam(BLOB_ID) String blobId, @QueryParam(TOKEN) String token);
 }

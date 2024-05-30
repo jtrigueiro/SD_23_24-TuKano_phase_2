@@ -94,10 +94,8 @@ public class ShortsServer implements Shorts {
                 
                 for (String url : getShortenBlobURL(s)) { // [BLOBAPAGADO, BLOBDOWNLOAD] OU [BLOBORIGEM, BLOBAPAGADO]
                     if (!blobURI.toString().equals(url)) {
-                        //long timestamp = System.currentTimeMillis();
-                        // Bytes to upload in different blob
-                        Result<byte[]> bytes = clients.get(URI.create(url)).download(s.getShortId());
-                                //String.valueOf(timestamp), org.apache.commons.codec.digest.DigestUtils.sha256Hex(url + "/blobs/" + s.getShortId() + timestamp + privateKey));
+                        
+                        Result<byte[]> bytes = clients.get(URI.create(url)).download(s.getShortId(), Token.get());
 
                         if (bytes.isOK()) {
                             for (URI uri : clients.keySet()) {
@@ -105,7 +103,7 @@ public class ShortsServer implements Shorts {
                                 // Se for diferente do blob apagado e do blob de origem
                                 if (!uri.toString().equals(url) && !uri.toString().equals(blobURI.toString())) {
 
-                                    Result<Void> upload = clients.get(uri).upload(s.getShortId(), bytes.value());
+                                    Result<Void> upload = clients.get(uri).upload(s.getShortId(), bytes.value(), Token.get());
 
                                     if (upload.isOK()) {
                                         // Atualizar a carga do blob
@@ -418,8 +416,8 @@ public class ShortsServer implements Shorts {
     }
 
     private String[] minLoad() {
-        //int i = Math.min(2, blobLoad.size());
-        String[] minLoad = new String[2];
+        int i = Math.min(2, blobLoad.size());
+        String[] minLoad = new String[i];
 
         int min = Integer.MAX_VALUE;
         for (Map.Entry<URI, Integer> entry : blobLoad.entrySet()) {
@@ -429,7 +427,7 @@ public class ShortsServer implements Shorts {
             }
         }
 
-        //if (i == 2) {
+        if (i == 2) {
             min = Integer.MAX_VALUE;
             for (Map.Entry<URI, Integer> entry : blobLoad.entrySet()) {
                 if (entry.getValue() < min && !entry.getKey().toString().equals(minLoad[0])) {
@@ -437,7 +435,7 @@ public class ShortsServer implements Shorts {
                     minLoad[1] = entry.getKey().toString();
                 }
             }
-        //}
+        }
 
         return minLoad;
     }
