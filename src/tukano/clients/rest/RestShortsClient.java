@@ -16,16 +16,17 @@ public class RestShortsClient extends RestClient implements Shorts {
         super(serverURI, RestShorts.PATH);
     }
 
-    public Result<Void> clt_deleteUserShorts(String userId) {
+    public Result<Void> svr_deleteUserShorts(String userId, String token) {
         return super.toJavaResult(
 				target.path(userId)
 						.path(RestShorts.DELETES)
+                        .queryParam(RestShorts.TOKEN, token)
 						.request()
 						.delete(),
 				Void.class);
     }
 
-    public Result<Void> clt_checkBlobId(String blobId) {
+    public Result<Void> svr_checkBlobId(String blobId) {
         return super.toJavaResult(
                 target.path(blobId)
                         .path(RestShorts.CHECK)
@@ -36,13 +37,13 @@ public class RestShortsClient extends RestClient implements Shorts {
     
 
     @Override
-	public Result<Void> deleteUserShorts(String userId) {
-		return super.reTry(() -> clt_deleteUserShorts(userId));
+	public Result<Void> deleteUserShorts(String userId, String token) {
+		return super.reTry(() -> svr_deleteUserShorts(userId, token));
 	}
 
     @Override
     public Result<Void> checkBlobId(String blobId) {
-        return super.reTry(() -> clt_checkBlobId(blobId));
+        return super.reTry(() -> svr_checkBlobId(blobId));
     }
 
     // ----------------- Unimplemented methods -----------------

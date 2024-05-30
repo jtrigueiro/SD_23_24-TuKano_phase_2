@@ -12728,6 +12728,18 @@ public final class ShortsProtoBuf {
      */
     com.google.protobuf.ByteString
         getUserIdBytes();
+
+    /**
+     * <code>string token = 2;</code>
+     * @return The token.
+     */
+    java.lang.String getToken();
+    /**
+     * <code>string token = 2;</code>
+     * @return The bytes for token.
+     */
+    com.google.protobuf.ByteString
+        getTokenBytes();
   }
   /**
    * Protobuf type {@code DeleteUserShortsArgs}
@@ -12743,6 +12755,7 @@ public final class ShortsProtoBuf {
     }
     private DeleteUserShortsArgs() {
       userId_ = "";
+      token_ = "";
     }
 
     @java.lang.Override
@@ -12779,6 +12792,12 @@ public final class ShortsProtoBuf {
               java.lang.String s = input.readStringRequireUtf8();
 
               userId_ = s;
+              break;
+            }
+            case 18: {
+              java.lang.String s = input.readStringRequireUtf8();
+
+              token_ = s;
               break;
             }
             default: {
@@ -12853,6 +12872,44 @@ public final class ShortsProtoBuf {
       }
     }
 
+    public static final int TOKEN_FIELD_NUMBER = 2;
+    private volatile java.lang.Object token_;
+    /**
+     * <code>string token = 2;</code>
+     * @return The token.
+     */
+    @java.lang.Override
+    public java.lang.String getToken() {
+      java.lang.Object ref = token_;
+      if (ref instanceof java.lang.String) {
+        return (java.lang.String) ref;
+      } else {
+        com.google.protobuf.ByteString bs = 
+            (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        token_ = s;
+        return s;
+      }
+    }
+    /**
+     * <code>string token = 2;</code>
+     * @return The bytes for token.
+     */
+    @java.lang.Override
+    public com.google.protobuf.ByteString
+        getTokenBytes() {
+      java.lang.Object ref = token_;
+      if (ref instanceof java.lang.String) {
+        com.google.protobuf.ByteString b = 
+            com.google.protobuf.ByteString.copyFromUtf8(
+                (java.lang.String) ref);
+        token_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+
     private byte memoizedIsInitialized = -1;
     @java.lang.Override
     public final boolean isInitialized() {
@@ -12870,6 +12927,9 @@ public final class ShortsProtoBuf {
       if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(userId_)) {
         com.google.protobuf.GeneratedMessageV3.writeString(output, 1, userId_);
       }
+      if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(token_)) {
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 2, token_);
+      }
       unknownFields.writeTo(output);
     }
 
@@ -12881,6 +12941,9 @@ public final class ShortsProtoBuf {
       size = 0;
       if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(userId_)) {
         size += com.google.protobuf.GeneratedMessageV3.computeStringSize(1, userId_);
+      }
+      if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(token_)) {
+        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(2, token_);
       }
       size += unknownFields.getSerializedSize();
       memoizedSize = size;
@@ -12899,6 +12962,8 @@ public final class ShortsProtoBuf {
 
       if (!getUserId()
           .equals(other.getUserId())) return false;
+      if (!getToken()
+          .equals(other.getToken())) return false;
       if (!unknownFields.equals(other.unknownFields)) return false;
       return true;
     }
@@ -12912,6 +12977,8 @@ public final class ShortsProtoBuf {
       hash = (19 * hash) + getDescriptor().hashCode();
       hash = (37 * hash) + USERID_FIELD_NUMBER;
       hash = (53 * hash) + getUserId().hashCode();
+      hash = (37 * hash) + TOKEN_FIELD_NUMBER;
+      hash = (53 * hash) + getToken().hashCode();
       hash = (29 * hash) + unknownFields.hashCode();
       memoizedHashCode = hash;
       return hash;
@@ -13047,6 +13114,8 @@ public final class ShortsProtoBuf {
         super.clear();
         userId_ = "";
 
+        token_ = "";
+
         return this;
       }
 
@@ -13074,6 +13143,7 @@ public final class ShortsProtoBuf {
       public tukano.impl.grpc.generated_java.ShortsProtoBuf.DeleteUserShortsArgs buildPartial() {
         tukano.impl.grpc.generated_java.ShortsProtoBuf.DeleteUserShortsArgs result = new tukano.impl.grpc.generated_java.ShortsProtoBuf.DeleteUserShortsArgs(this);
         result.userId_ = userId_;
+        result.token_ = token_;
         onBuilt();
         return result;
       }
@@ -13124,6 +13194,10 @@ public final class ShortsProtoBuf {
         if (other == tukano.impl.grpc.generated_java.ShortsProtoBuf.DeleteUserShortsArgs.getDefaultInstance()) return this;
         if (!other.getUserId().isEmpty()) {
           userId_ = other.userId_;
+          onChanged();
+        }
+        if (!other.getToken().isEmpty()) {
+          token_ = other.token_;
           onChanged();
         }
         this.mergeUnknownFields(other.unknownFields);
@@ -13227,6 +13301,82 @@ public final class ShortsProtoBuf {
   checkByteStringIsUtf8(value);
         
         userId_ = value;
+        onChanged();
+        return this;
+      }
+
+      private java.lang.Object token_ = "";
+      /**
+       * <code>string token = 2;</code>
+       * @return The token.
+       */
+      public java.lang.String getToken() {
+        java.lang.Object ref = token_;
+        if (!(ref instanceof java.lang.String)) {
+          com.google.protobuf.ByteString bs =
+              (com.google.protobuf.ByteString) ref;
+          java.lang.String s = bs.toStringUtf8();
+          token_ = s;
+          return s;
+        } else {
+          return (java.lang.String) ref;
+        }
+      }
+      /**
+       * <code>string token = 2;</code>
+       * @return The bytes for token.
+       */
+      public com.google.protobuf.ByteString
+          getTokenBytes() {
+        java.lang.Object ref = token_;
+        if (ref instanceof String) {
+          com.google.protobuf.ByteString b = 
+              com.google.protobuf.ByteString.copyFromUtf8(
+                  (java.lang.String) ref);
+          token_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
+        }
+      }
+      /**
+       * <code>string token = 2;</code>
+       * @param value The token to set.
+       * @return This builder for chaining.
+       */
+      public Builder setToken(
+          java.lang.String value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  
+        token_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string token = 2;</code>
+       * @return This builder for chaining.
+       */
+      public Builder clearToken() {
+        
+        token_ = getDefaultInstance().getToken();
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string token = 2;</code>
+       * @param value The bytes for token to set.
+       * @return This builder for chaining.
+       */
+      public Builder setTokenBytes(
+          com.google.protobuf.ByteString value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  checkByteStringIsUtf8(value);
+        
+        token_ = value;
         onChanged();
         return this;
       }
@@ -14839,25 +14989,25 @@ public final class ShortsProtoBuf {
       "shortId\030\001 \001(\t\022\020\n\010password\030\002 \001(\t\"\035\n\013Likes" +
       "Result\022\016\n\006userId\030\001 \003(\t\"/\n\013GetFeedArgs\022\016\n" +
       "\006userId\030\001 \001(\t\022\020\n\010password\030\002 \001(\t\" \n\rGetFe" +
-      "edResult\022\017\n\007shortId\030\001 \003(\t\"&\n\024DeleteUserS" +
-      "hortsArgs\022\016\n\006userId\030\001 \001(\t\"\030\n\026DeleteUserS" +
-      "hortsResult\"!\n\017CheckBlobIdArgs\022\016\n\006blobId" +
-      "\030\001 \001(\t\"\023\n\021CheckBlobIdResult2\207\004\n\006Shorts\0223" +
-      "\n\013createShort\022\020.CreateShortArgs\032\022.Create" +
-      "ShortResult\0223\n\013deleteShort\022\020.DeleteShort" +
-      "Args\032\022.DeleteShortResult\022*\n\010getShort\022\r.G" +
-      "etShortArgs\032\017.GetShortResult\022-\n\tgetShort" +
-      "s\022\016.GetShortsArgs\032\020.GetShortsResult\022$\n\006f" +
-      "ollow\022\013.FollowArgs\032\r.FollowResult\022-\n\tfol" +
-      "lowers\022\016.FollowersArgs\032\020.FollowersResult" +
-      "\022\036\n\004like\022\t.LikeArgs\032\013.LikeResult\022!\n\005like" +
-      "s\022\n.LikesArgs\032\014.LikesResult\022\'\n\007getFeed\022\014" +
-      ".GetFeedArgs\032\016.GetFeedResult\022B\n\020deleteUs" +
-      "erShorts\022\025.DeleteUserShortsArgs\032\027.Delete" +
-      "UserShortsResult\0223\n\013checkBlobId\022\020.CheckB" +
-      "lobIdArgs\032\022.CheckBlobIdResultB1\n\037tukano." +
-      "impl.grpc.generated_javaB\016ShortsProtoBuf" +
-      "b\006proto3"
+      "edResult\022\017\n\007shortId\030\001 \003(\t\"5\n\024DeleteUserS" +
+      "hortsArgs\022\016\n\006userId\030\001 \001(\t\022\r\n\005token\030\002 \001(\t" +
+      "\"\030\n\026DeleteUserShortsResult\"!\n\017CheckBlobI" +
+      "dArgs\022\016\n\006blobId\030\001 \001(\t\"\023\n\021CheckBlobIdResu" +
+      "lt2\207\004\n\006Shorts\0223\n\013createShort\022\020.CreateSho" +
+      "rtArgs\032\022.CreateShortResult\0223\n\013deleteShor" +
+      "t\022\020.DeleteShortArgs\032\022.DeleteShortResult\022" +
+      "*\n\010getShort\022\r.GetShortArgs\032\017.GetShortRes" +
+      "ult\022-\n\tgetShorts\022\016.GetShortsArgs\032\020.GetSh" +
+      "ortsResult\022$\n\006follow\022\013.FollowArgs\032\r.Foll" +
+      "owResult\022-\n\tfollowers\022\016.FollowersArgs\032\020." +
+      "FollowersResult\022\036\n\004like\022\t.LikeArgs\032\013.Lik" +
+      "eResult\022!\n\005likes\022\n.LikesArgs\032\014.LikesResu" +
+      "lt\022\'\n\007getFeed\022\014.GetFeedArgs\032\016.GetFeedRes" +
+      "ult\022B\n\020deleteUserShorts\022\025.DeleteUserShor" +
+      "tsArgs\032\027.DeleteUserShortsResult\0223\n\013check" +
+      "BlobId\022\020.CheckBlobIdArgs\032\022.CheckBlobIdRe" +
+      "sultB1\n\037tukano.impl.grpc.generated_javaB" +
+      "\016ShortsProtoBufb\006proto3"
     };
     descriptor = com.google.protobuf.Descriptors.FileDescriptor
       .internalBuildGeneratedFileFrom(descriptorData,
@@ -14982,7 +15132,7 @@ public final class ShortsProtoBuf {
     internal_static_DeleteUserShortsArgs_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_DeleteUserShortsArgs_descriptor,
-        new java.lang.String[] { "UserId", });
+        new java.lang.String[] { "UserId", "Token", });
     internal_static_DeleteUserShortsResult_descriptor =
       getDescriptor().getMessageTypes().get(20);
     internal_static_DeleteUserShortsResult_fieldAccessorTable = new

@@ -116,6 +116,7 @@ message GetFeedResult {
 
 message DeleteUserShortsArgs {
 	string userId = 1;
+	string token = 2;
 }
 
 message DeleteUserShortsResult {}

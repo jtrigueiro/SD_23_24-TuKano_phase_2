@@ -150,7 +150,7 @@ public class GrpcShortsServerStub implements ShortsGrpc.AsyncService, BindableSe
 
     @Override
     public void deleteUserShorts(DeleteUserShortsArgs request, StreamObserver<DeleteUserShortsResult> responseObserver) {
-        Result<Void> res = impl.deleteUserShorts(request.getUserId());
+        Result<Void> res = impl.deleteUserShorts(request.getUserId(), request.getToken());
         if (!res.isOK())
             responseObserver.onError(errorCodeToStatus(res.error()));
         else {
@@ -161,7 +161,7 @@ public class GrpcShortsServerStub implements ShortsGrpc.AsyncService, BindableSe
 
     @Override
     public void checkBlobId(CheckBlobIdArgs request, StreamObserver<CheckBlobIdResult> responseObserver) {
-        Result<Void> res = impl.deleteUserShorts(request.getBlobId());
+        Result<Void> res = impl.checkBlobId(request.getBlobId());
         if (!res.isOK())
             responseObserver.onError(errorCodeToStatus(res.error()));
         else {

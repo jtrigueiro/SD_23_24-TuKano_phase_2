@@ -30,6 +30,7 @@ public interface RestShorts {
 	String FOLLOWERS = "/followers";
 	String DELETES = "/delete";
 	String CHECK = "/check";
+	String TOKEN = "token";
 
 	@POST
 	@Path("/{" + USER_ID + "}")
@@ -78,7 +79,7 @@ public interface RestShorts {
 
 	@DELETE
 	@Path("/{" + USER_ID + "}" + DELETES)
-	void deleteUserShorts(@PathParam(USER_ID) String userId);
+	void deleteUserShorts(@PathParam(USER_ID) String userId, @QueryParam(TOKEN) String token);
 
 	@GET
 	@Path("/{" + BLOB_ID + "}" + CHECK)

@@ -106,7 +106,7 @@ public class UsersServer implements Users {
 		
 		// Delete the user's shorts
 		Shorts client = ClientFactory.getShortsClient();
-		Result<Void> deleteShorts = client.deleteUserShorts(userId);
+		Result<Void> deleteShorts = client.deleteUserShorts(userId, Token.get());
 
 		if (!deleteShorts.isOK())
 			return Result.error(deleteShorts.error());

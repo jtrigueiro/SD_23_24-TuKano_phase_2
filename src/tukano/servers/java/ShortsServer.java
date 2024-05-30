@@ -358,7 +358,10 @@ public class ShortsServer implements Shorts {
     }
 
     @Override
-    public Result<Void> deleteUserShorts(String userId) {
+    public Result<Void> deleteUserShorts(String userId, String token) {
+        if(!Token.matches(token))
+            return Result.error(Result.ErrorCode.FORBIDDEN);
+            
         List<Short> shorts = Hibernate.getInstance().jpql(String.format(shortsByOwnerId, userId), Short.class);
 
         // Deleting shorts and its likes and blobs

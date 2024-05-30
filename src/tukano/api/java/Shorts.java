@@ -133,7 +133,7 @@ public interface Shorts {
 	 * @return (OK,void),
 	 *         NOT_FOUND if the blobId of a short owned by the user does not match an existing blob
 	 */
-	Result<Void> deleteUserShorts(String userId);
+	Result<Void> deleteUserShorts(String userId, String token);
 
 
 	/**

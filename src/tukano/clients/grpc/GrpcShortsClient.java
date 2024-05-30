@@ -21,7 +21,7 @@ public class GrpcShortsClient extends GrpcClient implements Shorts {
     }
 
     @Override
-    public Result<Void> deleteUserShorts(String userId) {
+    public Result<Void> deleteUserShorts(String userId, String token) {
         return toJavaResult(() -> {
             stub.deleteUserShorts(DeleteUserShortsArgs.newBuilder()
                     .setUserId(userId)
