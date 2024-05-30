@@ -70,9 +70,7 @@ public class GrpcBlobsServerStub implements BlobsGrpc.AsyncService, BindableServ
     }
 
     private boolean validateOperation(String blobUrl) {
-        try { // FORMAT: grpc://hostname:8080/grpc/blobs/blobID?verifier=xxxxx&timestamp=xxxxx
-              // URI uri = new URI(blobUrl);
-              // String[] params = uri.getQuery().split("&");
+        try {
 
             String[] parts = blobUrl.split("\\?");
             String[] params = parts[1].split("&");

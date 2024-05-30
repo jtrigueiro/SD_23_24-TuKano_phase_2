@@ -33,12 +33,12 @@ public class RestBlobsResource extends RestResource implements RestBlobs {
     }
 
     @Override
-    public void upload(String blobId, byte[] bytes, String token) {
+    public void svr_upload(String blobId, byte[] bytes, String token) {
         resultOrThrow(impl.upload(blobId, bytes));
     }
 
     @Override
-    public byte[] download(String blobId, String token) {
+    public byte[] svr_download(String blobId, String token) {
         return resultOrThrow(impl.download(blobId));
     }
 
