@@ -40,7 +40,7 @@ message DeleteArgs {
 
 message DeleteResult {}
 
-message ServerDonwloadArgs {
+message ServerDownloadArgs {
 	 string blobId = 1;
 	 string token = 2;
 }

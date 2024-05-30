@@ -8,8 +8,10 @@ import tukano.api.java.Blobs;
 import tukano.api.java.Result;
 import tukano.impl.grpc.generated_java.BlobsGrpc;
 import tukano.impl.grpc.generated_java.BlobsProtoBuf.DeleteArgs;
-import tukano.impl.grpc.generated_java.BlobsProtoBuf.DownloadArgs;
-import tukano.impl.grpc.generated_java.BlobsProtoBuf.UploadArgs;
+
+import tukano.impl.grpc.generated_java.BlobsProtoBuf.ServerDownloadArgs;
+import tukano.impl.grpc.generated_java.BlobsProtoBuf.ServerUploadArgs;
+
 import tukano.impl.grpc.generated_java.BlobsGrpc.BlobsBlockingStub;
 
 public class GrpcBlobsClient extends GrpcClient implements Blobs {
@@ -22,31 +24,34 @@ public class GrpcBlobsClient extends GrpcClient implements Blobs {
     }
 
     @Override
-    public Result<Void> delete(String blobId) {
+    public Result<Void> delete(String blobId, String token) {
         return toJavaResult(() -> {
             stub.delete(DeleteArgs.newBuilder()
                     .setBlobId(blobId)
+                    .setToken(token)
                     .build());
             return null;
         });
     }
 
     @Override
-    public Result<Void> upload(String blobId, byte[] bytes) {
+    public Result<Void> upload(String blobId, byte[] bytes, String token) {
         return toJavaResult(() -> {
-            stub.upload(UploadArgs.newBuilder()
+            stub.serverUpload(ServerUploadArgs.newBuilder()
                     .setBlobId(blobId)
                     .setBlobIdBytes(ByteString.copyFrom(bytes))
+                    .setToken(token)
                     .build());
             return null;
         });
     }
 
     @Override
-    public Result<byte[]> download(String blobId) {
+    public Result<byte[]> download(String blobId, String token) {
         return toJavaResult(() -> {
-            stub.download(DownloadArgs.newBuilder()
+            stub.serverDownload(ServerDownloadArgs.newBuilder()
                     .setBlobId(blobId)
+                    .setToken(token)
                     .build());
             return null;
         });
@@ -67,19 +72,19 @@ public class GrpcBlobsClient extends GrpcClient implements Blobs {
     }
 
     @Override
-    public Result<Void> upload(String blobId, byte[] bytes, String token) {
+    public Result<Void> upload(String blobId, byte[] bytes) {
         // TODO Auto-generated method stub
         throw new UnsupportedOperationException("Unimplemented method 'upload'");
     }
 
     @Override
-    public Result<byte[]> download(String blobId, String token) {
+    public Result<byte[]> download(String blobId) {
         // TODO Auto-generated method stub
         throw new UnsupportedOperationException("Unimplemented method 'download'");
     }
 
     @Override
-    public Result<Void> delete(String blobId, String token) {
+    public Result<Void> delete(String blobId) {
         // TODO Auto-generated method stub
         throw new UnsupportedOperationException("Unimplemented method 'delete'");
     }

@@ -108,6 +108,68 @@ public final class BlobsGrpc {
     return getDeleteMethod;
   }
 
+  private static volatile io.grpc.MethodDescriptor<tukano.impl.grpc.generated_java.BlobsProtoBuf.ServerDownloadArgs,
+      tukano.impl.grpc.generated_java.BlobsProtoBuf.ServerDownloadResult> getServerDownloadMethod;
+
+  @io.grpc.stub.annotations.RpcMethod(
+      fullMethodName = SERVICE_NAME + '/' + "serverDownload",
+      requestType = tukano.impl.grpc.generated_java.BlobsProtoBuf.ServerDownloadArgs.class,
+      responseType = tukano.impl.grpc.generated_java.BlobsProtoBuf.ServerDownloadResult.class,
+      methodType = io.grpc.MethodDescriptor.MethodType.SERVER_STREAMING)
+  public static io.grpc.MethodDescriptor<tukano.impl.grpc.generated_java.BlobsProtoBuf.ServerDownloadArgs,
+      tukano.impl.grpc.generated_java.BlobsProtoBuf.ServerDownloadResult> getServerDownloadMethod() {
+    io.grpc.MethodDescriptor<tukano.impl.grpc.generated_java.BlobsProtoBuf.ServerDownloadArgs, tukano.impl.grpc.generated_java.BlobsProtoBuf.ServerDownloadResult> getServerDownloadMethod;
+    if ((getServerDownloadMethod = BlobsGrpc.getServerDownloadMethod) == null) {
+      synchronized (BlobsGrpc.class) {
+        if ((getServerDownloadMethod = BlobsGrpc.getServerDownloadMethod) == null) {
+          BlobsGrpc.getServerDownloadMethod = getServerDownloadMethod =
+              io.grpc.MethodDescriptor.<tukano.impl.grpc.generated_java.BlobsProtoBuf.ServerDownloadArgs, tukano.impl.grpc.generated_java.BlobsProtoBuf.ServerDownloadResult>newBuilder()
+              .setType(io.grpc.MethodDescriptor.MethodType.SERVER_STREAMING)
+              .setFullMethodName(generateFullMethodName(SERVICE_NAME, "serverDownload"))
+              .setSampledToLocalTracing(true)
+              .setRequestMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
+                  tukano.impl.grpc.generated_java.BlobsProtoBuf.ServerDownloadArgs.getDefaultInstance()))
+              .setResponseMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
+                  tukano.impl.grpc.generated_java.BlobsProtoBuf.ServerDownloadResult.getDefaultInstance()))
+              .setSchemaDescriptor(new BlobsMethodDescriptorSupplier("serverDownload"))
+              .build();
+        }
+      }
+    }
+    return getServerDownloadMethod;
+  }
+
+  private static volatile io.grpc.MethodDescriptor<tukano.impl.grpc.generated_java.BlobsProtoBuf.ServerUploadArgs,
+      tukano.impl.grpc.generated_java.BlobsProtoBuf.ServerUploadResult> getServerUploadMethod;
+
+  @io.grpc.stub.annotations.RpcMethod(
+      fullMethodName = SERVICE_NAME + '/' + "serverUpload",
+      requestType = tukano.impl.grpc.generated_java.BlobsProtoBuf.ServerUploadArgs.class,
+      responseType = tukano.impl.grpc.generated_java.BlobsProtoBuf.ServerUploadResult.class,
+      methodType = io.grpc.MethodDescriptor.MethodType.UNARY)
+  public static io.grpc.MethodDescriptor<tukano.impl.grpc.generated_java.BlobsProtoBuf.ServerUploadArgs,
+      tukano.impl.grpc.generated_java.BlobsProtoBuf.ServerUploadResult> getServerUploadMethod() {
+    io.grpc.MethodDescriptor<tukano.impl.grpc.generated_java.BlobsProtoBuf.ServerUploadArgs, tukano.impl.grpc.generated_java.BlobsProtoBuf.ServerUploadResult> getServerUploadMethod;
+    if ((getServerUploadMethod = BlobsGrpc.getServerUploadMethod) == null) {
+      synchronized (BlobsGrpc.class) {
+        if ((getServerUploadMethod = BlobsGrpc.getServerUploadMethod) == null) {
+          BlobsGrpc.getServerUploadMethod = getServerUploadMethod =
+              io.grpc.MethodDescriptor.<tukano.impl.grpc.generated_java.BlobsProtoBuf.ServerUploadArgs, tukano.impl.grpc.generated_java.BlobsProtoBuf.ServerUploadResult>newBuilder()
+              .setType(io.grpc.MethodDescriptor.MethodType.UNARY)
+              .setFullMethodName(generateFullMethodName(SERVICE_NAME, "serverUpload"))
+              .setSampledToLocalTracing(true)
+              .setRequestMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
+                  tukano.impl.grpc.generated_java.BlobsProtoBuf.ServerUploadArgs.getDefaultInstance()))
+              .setResponseMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
+                  tukano.impl.grpc.generated_java.BlobsProtoBuf.ServerUploadResult.getDefaultInstance()))
+              .setSchemaDescriptor(new BlobsMethodDescriptorSupplier("serverUpload"))
+              .build();
+        }
+      }
+    }
+    return getServerUploadMethod;
+  }
+
   /**
    * Creates a new async stub that supports all call types for the service
    */
@@ -176,6 +238,20 @@ public final class BlobsGrpc {
         io.grpc.stub.StreamObserver<tukano.impl.grpc.generated_java.BlobsProtoBuf.DeleteResult> responseObserver) {
       io.grpc.stub.ServerCalls.asyncUnimplementedUnaryCall(getDeleteMethod(), responseObserver);
     }
+
+    /**
+     */
+    default void serverDownload(tukano.impl.grpc.generated_java.BlobsProtoBuf.ServerDownloadArgs request,
+        io.grpc.stub.StreamObserver<tukano.impl.grpc.generated_java.BlobsProtoBuf.ServerDownloadResult> responseObserver) {
+      io.grpc.stub.ServerCalls.asyncUnimplementedUnaryCall(getServerDownloadMethod(), responseObserver);
+    }
+
+    /**
+     */
+    default void serverUpload(tukano.impl.grpc.generated_java.BlobsProtoBuf.ServerUploadArgs request,
+        io.grpc.stub.StreamObserver<tukano.impl.grpc.generated_java.BlobsProtoBuf.ServerUploadResult> responseObserver) {
+      io.grpc.stub.ServerCalls.asyncUnimplementedUnaryCall(getServerUploadMethod(), responseObserver);
+    }
   }
 
   /**
@@ -228,6 +304,22 @@ public final class BlobsGrpc {
       io.grpc.stub.ClientCalls.asyncUnaryCall(
           getChannel().newCall(getDeleteMethod(), getCallOptions()), request, responseObserver);
     }
+
+    /**
+     */
+    public void serverDownload(tukano.impl.grpc.generated_java.BlobsProtoBuf.ServerDownloadArgs request,
+        io.grpc.stub.StreamObserver<tukano.impl.grpc.generated_java.BlobsProtoBuf.ServerDownloadResult> responseObserver) {
+      io.grpc.stub.ClientCalls.asyncServerStreamingCall(
+          getChannel().newCall(getServerDownloadMethod(), getCallOptions()), request, responseObserver);
+    }
+
+    /**
+     */
+    public void serverUpload(tukano.impl.grpc.generated_java.BlobsProtoBuf.ServerUploadArgs request,
+        io.grpc.stub.StreamObserver<tukano.impl.grpc.generated_java.BlobsProtoBuf.ServerUploadResult> responseObserver) {
+      io.grpc.stub.ClientCalls.asyncUnaryCall(
+          getChannel().newCall(getServerUploadMethod(), getCallOptions()), request, responseObserver);
+    }
   }
 
   /**
@@ -267,6 +359,21 @@ public final class BlobsGrpc {
       return io.grpc.stub.ClientCalls.blockingUnaryCall(
           getChannel(), getDeleteMethod(), getCallOptions(), request);
     }
+
+    /**
+     */
+    public java.util.Iterator<tukano.impl.grpc.generated_java.BlobsProtoBuf.ServerDownloadResult> serverDownload(
+        tukano.impl.grpc.generated_java.BlobsProtoBuf.ServerDownloadArgs request) {
+      return io.grpc.stub.ClientCalls.blockingServerStreamingCall(
+          getChannel(), getServerDownloadMethod(), getCallOptions(), request);
+    }
+
+    /**
+     */
+    public tukano.impl.grpc.generated_java.BlobsProtoBuf.ServerUploadResult serverUpload(tukano.impl.grpc.generated_java.BlobsProtoBuf.ServerUploadArgs request) {
+      return io.grpc.stub.ClientCalls.blockingUnaryCall(
+          getChannel(), getServerUploadMethod(), getCallOptions(), request);
+    }
   }
 
   /**
@@ -300,11 +407,21 @@ public final class BlobsGrpc {
       return io.grpc.stub.ClientCalls.futureUnaryCall(
           getChannel().newCall(getDeleteMethod(), getCallOptions()), request);
     }
+
+    /**
+     */
+    public com.google.common.util.concurrent.ListenableFuture<tukano.impl.grpc.generated_java.BlobsProtoBuf.ServerUploadResult> serverUpload(
+        tukano.impl.grpc.generated_java.BlobsProtoBuf.ServerUploadArgs request) {
+      return io.grpc.stub.ClientCalls.futureUnaryCall(
+          getChannel().newCall(getServerUploadMethod(), getCallOptions()), request);
+    }
   }
 
   private static final int METHODID_UPLOAD = 0;
   private static final int METHODID_DOWNLOAD = 1;
   private static final int METHODID_DELETE = 2;
+  private static final int METHODID_SERVER_DOWNLOAD = 3;
+  private static final int METHODID_SERVER_UPLOAD = 4;
 
   private static final class MethodHandlers<Req, Resp> implements
       io.grpc.stub.ServerCalls.UnaryMethod<Req, Resp>,
@@ -334,6 +451,14 @@ public final class BlobsGrpc {
         case METHODID_DELETE:
           serviceImpl.delete((tukano.impl.grpc.generated_java.BlobsProtoBuf.DeleteArgs) request,
               (io.grpc.stub.StreamObserver<tukano.impl.grpc.generated_java.BlobsProtoBuf.DeleteResult>) responseObserver);
+          break;
+        case METHODID_SERVER_DOWNLOAD:
+          serviceImpl.serverDownload((tukano.impl.grpc.generated_java.BlobsProtoBuf.ServerDownloadArgs) request,
+              (io.grpc.stub.StreamObserver<tukano.impl.grpc.generated_java.BlobsProtoBuf.ServerDownloadResult>) responseObserver);
+          break;
+        case METHODID_SERVER_UPLOAD:
+          serviceImpl.serverUpload((tukano.impl.grpc.generated_java.BlobsProtoBuf.ServerUploadArgs) request,
+              (io.grpc.stub.StreamObserver<tukano.impl.grpc.generated_java.BlobsProtoBuf.ServerUploadResult>) responseObserver);
           break;
         default:
           throw new AssertionError();
@@ -374,6 +499,20 @@ public final class BlobsGrpc {
               tukano.impl.grpc.generated_java.BlobsProtoBuf.DeleteArgs,
               tukano.impl.grpc.generated_java.BlobsProtoBuf.DeleteResult>(
                 service, METHODID_DELETE)))
+        .addMethod(
+          getServerDownloadMethod(),
+          io.grpc.stub.ServerCalls.asyncServerStreamingCall(
+            new MethodHandlers<
+              tukano.impl.grpc.generated_java.BlobsProtoBuf.ServerDownloadArgs,
+              tukano.impl.grpc.generated_java.BlobsProtoBuf.ServerDownloadResult>(
+                service, METHODID_SERVER_DOWNLOAD)))
+        .addMethod(
+          getServerUploadMethod(),
+          io.grpc.stub.ServerCalls.asyncUnaryCall(
+            new MethodHandlers<
+              tukano.impl.grpc.generated_java.BlobsProtoBuf.ServerUploadArgs,
+              tukano.impl.grpc.generated_java.BlobsProtoBuf.ServerUploadResult>(
+                service, METHODID_SERVER_UPLOAD)))
         .build();
   }
 
@@ -425,6 +564,8 @@ public final class BlobsGrpc {
               .addMethod(getUploadMethod())
               .addMethod(getDownloadMethod())
               .addMethod(getDeleteMethod())
+              .addMethod(getServerDownloadMethod())
+              .addMethod(getServerUploadMethod())
               .build();
         }
       }

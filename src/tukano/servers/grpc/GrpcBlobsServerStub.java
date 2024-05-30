@@ -15,6 +15,10 @@ import tukano.impl.grpc.generated_java.BlobsProtoBuf.DeleteArgs;
 import tukano.impl.grpc.generated_java.BlobsProtoBuf.DeleteResult;
 import tukano.impl.grpc.generated_java.BlobsProtoBuf.DownloadArgs;
 import tukano.impl.grpc.generated_java.BlobsProtoBuf.DownloadResult;
+import tukano.impl.grpc.generated_java.BlobsProtoBuf.ServerDownloadArgs;
+import tukano.impl.grpc.generated_java.BlobsProtoBuf.ServerDownloadResult;
+import tukano.impl.grpc.generated_java.BlobsProtoBuf.ServerUploadArgs;
+import tukano.impl.grpc.generated_java.BlobsProtoBuf.ServerUploadResult;
 import tukano.impl.grpc.generated_java.BlobsProtoBuf.UploadArgs;
 import tukano.impl.grpc.generated_java.BlobsProtoBuf.UploadResult;
 
@@ -57,43 +61,40 @@ public class GrpcBlobsServerStub implements BlobsGrpc.AsyncService, BindableServ
             responseObserver.onCompleted();
         }
     }
-    /*
-     * @Override
-     * public void serverUpload(ServerUploadArgs request,
-     * StreamObserver<ServerUploadResult> responseObserver) {
-     * if (!validateOperation(request.getBlobId()))
-     * responseObserver.onError(errorCodeToStatus(Result.ErrorCode.FORBIDDEN));
-     * 
-     * var res = impl.upload(request.getBlobId().split("\\?")[0],
-     * request.getData().toByteArray());
-     * if (!res.isOK())
-     * responseObserver.onError(errorCodeToStatus(res.error()));
-     * else {
-     * responseObserver.onNext(ServerUploadResult.newBuilder().build());
-     * responseObserver.onCompleted();
-     * }
-     * }
-     * 
-     * @Override
-     * public void serverDownload(ServerDownloadArgs request,
-     * StreamObserver<ServerDownloadResult> responseObserver) {
-     * if (!validateOperation(request.getBlobId()))
-     * responseObserver.onError(errorCodeToStatus(Result.ErrorCode.FORBIDDEN));
-     * 
-     * var res = impl.download(request.getBlobId().split("\\?")[0]);
-     * if (!res.isOK())
-     * responseObserver.onError(errorCodeToStatus(res.error()));
-     * else {
-     * responseObserver
-     * .onNext(ServerDownloadResult.newBuilder().setChunk(ByteString.copyFrom(res.
-     * value())).build());
-     * responseObserver.onCompleted();
-     * }
-     * }
-     */
+
+    @Override
+    public void serverUpload(ServerUploadArgs request, StreamObserver<ServerUploadResult> responseObserver) {
+        if (!validateToken(request.getToken()))
+            responseObserver.onError(errorCodeToStatus(Result.ErrorCode.FORBIDDEN));
+
+        var res = impl.upload(request.getBlobId(), request.getData().toByteArray());
+        if (!res.isOK())
+            responseObserver.onError(errorCodeToStatus(res.error()));
+        else {
+            responseObserver.onNext(ServerUploadResult.newBuilder().build());
+            responseObserver.onCompleted();
+        }
+    }
+
+    @Override
+    public void serverDownload(ServerDownloadArgs request, StreamObserver<ServerDownloadResult> responseObserver) {
+        if (!validateToken(request.getToken()))
+            responseObserver.onError(errorCodeToStatus(Result.ErrorCode.FORBIDDEN));
+
+        var res = impl.download(request.getBlobId());
+        if (!res.isOK())
+            responseObserver.onError(errorCodeToStatus(res.error()));
+        else {
+            responseObserver
+                    .onNext(ServerDownloadResult.newBuilder().setChunk(ByteString.copyFrom(res.value())).build());
+            responseObserver.onCompleted();
+        }
+    }
 
     @Override
     public void delete(DeleteArgs request, StreamObserver<DeleteResult> responseObserver) {
+        if (!validateToken(request.getToken()))
+            responseObserver.onError(errorCodeToStatus(Result.ErrorCode.FORBIDDEN));
         var res = impl.delete(request.getBlobId());
         if (!res.isOK())
             responseObserver.onError(errorCodeToStatus(res.error()));
@@ -118,6 +119,10 @@ public class GrpcBlobsServerStub implements BlobsGrpc.AsyncService, BindableServ
         } catch (Exception e) {
             return false;
         }
+    }
+
+    private boolean validateToken(String token) {
+        return impl.validateOperation(token).isOK();
     }
 
     protected static Throwable errorCodeToStatus(Result.ErrorCode error) {

@@ -1,5 +1,6 @@
 package tukano.servers.java;
 
+import org.hibernate.Hibernate;
 import org.pac4j.scribe.builder.api.DropboxApi20;
 import com.github.scribejava.core.builder.ServiceBuilder;
 import com.github.scribejava.core.model.OAuth2AccessToken;
@@ -22,11 +23,10 @@ import tukano.api.java.Shorts;
 import tukano.api.rest.RestBlobs;
 import tukano.clients.ClientFactory;
 
-
 public class BlobProxyServer implements Blobs {
     private static final String apiKey = "b994yeq62paqye8";
     private static final String apiSecret = "8w3xrdm9bzh6veo";
-    private static final String accessTokenStr = "sl.B2IJdXXnNuWLnQi4Sv4qxA25fWURFJ_tBR262BnKdnuWKEZy24LCkg9_ZpcDzbnKPr3_dUlLDlOCyIj92JanS1jlZ8cKEy553y7nKCaxX6AY0WY6uPacbqRur_Tj_Q_xqrzBJnufa7EO";
+    private static final String accessTokenStr = "sl.B2OG8jNM69PJUKETf6kjabsqAxAO8Hv1A-eXWPziPDUK3b8_rpa6eEr5lLby4e_N1w1R5VYeeXr2-PM5-E38uj2XNDzilcTw5kRZ-770HF0hnv26m_EfJ7R2X83EKyKK06JAxUFzIqLc";
 
     private static final String DELETE_FILE_V2_URL = "https://api.dropboxapi.com/2/files/delete_v2";
     private static final String UPLOAD_FILE_URL = "https://content.dropboxapi.com/2/files/upload";
@@ -47,11 +47,11 @@ public class BlobProxyServer implements Blobs {
     private final String privateKey, serverURI;
 
     public BlobProxyServer() {
-        Token.set( Args.valueOf("-token", ""));
+        Token.set(Args.valueOf("-token", ""));
         this.privateKey = Args.valueOf("-secret", "");
         this.serverURI = Args.valueOf("-serverURI", "");
         Boolean cleanState = Boolean.parseBoolean(Args.valueOf("-cleanState", ""));
-        
+
         json = new Gson();
         accessToken = new OAuth2AccessToken(accessTokenStr);
         service = new ServiceBuilder(apiKey).apiSecret(apiSecret).build(DropboxApi20.INSTANCE);
@@ -188,13 +188,13 @@ public class BlobProxyServer implements Blobs {
 
     @Override
     public Result<Void> validateOperation(String token) {
-        if(Token.matches(token))
+        if (Token.matches(token))
             return Result.ok();
         else
             return Result.error(Result.ErrorCode.FORBIDDEN);
     }
 
-    //------------------- Unimplemented methods -------------------
+    // ------------------- Unimplemented methods -------------------
 
     @Override
     public Result<Void> upload(String blobId, byte[] bytes, String token) {

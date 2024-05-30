@@ -3282,8 +3282,8 @@ public final class BlobsProtoBuf {
 
   }
 
-  public interface ServerDonwloadArgsOrBuilder extends
-      // @@protoc_insertion_point(interface_extends:ServerDonwloadArgs)
+  public interface ServerDownloadArgsOrBuilder extends
+      // @@protoc_insertion_point(interface_extends:ServerDownloadArgs)
       com.google.protobuf.MessageOrBuilder {
 
     /**
@@ -3311,18 +3311,18 @@ public final class BlobsProtoBuf {
         getTokenBytes();
   }
   /**
-   * Protobuf type {@code ServerDonwloadArgs}
+   * Protobuf type {@code ServerDownloadArgs}
    */
-  public static final class ServerDonwloadArgs extends
+  public static final class ServerDownloadArgs extends
       com.google.protobuf.GeneratedMessageV3 implements
-      // @@protoc_insertion_point(message_implements:ServerDonwloadArgs)
-      ServerDonwloadArgsOrBuilder {
+      // @@protoc_insertion_point(message_implements:ServerDownloadArgs)
+      ServerDownloadArgsOrBuilder {
   private static final long serialVersionUID = 0L;
-    // Use ServerDonwloadArgs.newBuilder() to construct.
-    private ServerDonwloadArgs(com.google.protobuf.GeneratedMessageV3.Builder<?> builder) {
+    // Use ServerDownloadArgs.newBuilder() to construct.
+    private ServerDownloadArgs(com.google.protobuf.GeneratedMessageV3.Builder<?> builder) {
       super(builder);
     }
-    private ServerDonwloadArgs() {
+    private ServerDownloadArgs() {
       blobId_ = "";
       token_ = "";
     }
@@ -3331,7 +3331,7 @@ public final class BlobsProtoBuf {
     @SuppressWarnings({"unused"})
     protected java.lang.Object newInstance(
         UnusedPrivateParameter unused) {
-      return new ServerDonwloadArgs();
+      return new ServerDownloadArgs();
     }
 
     @java.lang.Override
@@ -3339,7 +3339,7 @@ public final class BlobsProtoBuf {
     getUnknownFields() {
       return this.unknownFields;
     }
-    private ServerDonwloadArgs(
+    private ServerDownloadArgs(
         com.google.protobuf.CodedInputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
@@ -3392,15 +3392,15 @@ public final class BlobsProtoBuf {
     }
     public static final com.google.protobuf.Descriptors.Descriptor
         getDescriptor() {
-      return tukano.impl.grpc.generated_java.BlobsProtoBuf.internal_static_ServerDonwloadArgs_descriptor;
+      return tukano.impl.grpc.generated_java.BlobsProtoBuf.internal_static_ServerDownloadArgs_descriptor;
     }
 
     @java.lang.Override
     protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
         internalGetFieldAccessorTable() {
-      return tukano.impl.grpc.generated_java.BlobsProtoBuf.internal_static_ServerDonwloadArgs_fieldAccessorTable
+      return tukano.impl.grpc.generated_java.BlobsProtoBuf.internal_static_ServerDownloadArgs_fieldAccessorTable
           .ensureFieldAccessorsInitialized(
-              tukano.impl.grpc.generated_java.BlobsProtoBuf.ServerDonwloadArgs.class, tukano.impl.grpc.generated_java.BlobsProtoBuf.ServerDonwloadArgs.Builder.class);
+              tukano.impl.grpc.generated_java.BlobsProtoBuf.ServerDownloadArgs.class, tukano.impl.grpc.generated_java.BlobsProtoBuf.ServerDownloadArgs.Builder.class);
     }
 
     public static final int BLOBID_FIELD_NUMBER = 1;
@@ -3524,10 +3524,10 @@ public final class BlobsProtoBuf {
       if (obj == this) {
        return true;
       }
-      if (!(obj instanceof tukano.impl.grpc.generated_java.BlobsProtoBuf.ServerDonwloadArgs)) {
+      if (!(obj instanceof tukano.impl.grpc.generated_java.BlobsProtoBuf.ServerDownloadArgs)) {
         return super.equals(obj);
       }
-      tukano.impl.grpc.generated_java.BlobsProtoBuf.ServerDonwloadArgs other = (tukano.impl.grpc.generated_java.BlobsProtoBuf.ServerDonwloadArgs) obj;
+      tukano.impl.grpc.generated_java.BlobsProtoBuf.ServerDownloadArgs other = (tukano.impl.grpc.generated_java.BlobsProtoBuf.ServerDownloadArgs) obj;
 
       if (!getBlobId()
           .equals(other.getBlobId())) return false;
@@ -3553,69 +3553,69 @@ public final class BlobsProtoBuf {
       return hash;
     }
 
-    public static tukano.impl.grpc.generated_java.BlobsProtoBuf.ServerDonwloadArgs parseFrom(
+    public static tukano.impl.grpc.generated_java.BlobsProtoBuf.ServerDownloadArgs parseFrom(
         java.nio.ByteBuffer data)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data);
     }
-    public static tukano.impl.grpc.generated_java.BlobsProtoBuf.ServerDonwloadArgs parseFrom(
+    public static tukano.impl.grpc.generated_java.BlobsProtoBuf.ServerDownloadArgs parseFrom(
         java.nio.ByteBuffer data,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data, extensionRegistry);
     }
-    public static tukano.impl.grpc.generated_java.BlobsProtoBuf.ServerDonwloadArgs parseFrom(
+    public static tukano.impl.grpc.generated_java.BlobsProtoBuf.ServerDownloadArgs parseFrom(
         com.google.protobuf.ByteString data)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data);
     }
-    public static tukano.impl.grpc.generated_java.BlobsProtoBuf.ServerDonwloadArgs parseFrom(
+    public static tukano.impl.grpc.generated_java.BlobsProtoBuf.ServerDownloadArgs parseFrom(
         com.google.protobuf.ByteString data,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data, extensionRegistry);
     }
-    public static tukano.impl.grpc.generated_java.BlobsProtoBuf.ServerDonwloadArgs parseFrom(byte[] data)
+    public static tukano.impl.grpc.generated_java.BlobsProtoBuf.ServerDownloadArgs parseFrom(byte[] data)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data);
     }
-    public static tukano.impl.grpc.generated_java.BlobsProtoBuf.ServerDonwloadArgs parseFrom(
+    public static tukano.impl.grpc.generated_java.BlobsProtoBuf.ServerDownloadArgs parseFrom(
         byte[] data,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data, extensionRegistry);
     }
-    public static tukano.impl.grpc.generated_java.BlobsProtoBuf.ServerDonwloadArgs parseFrom(java.io.InputStream input)
+    public static tukano.impl.grpc.generated_java.BlobsProtoBuf.ServerDownloadArgs parseFrom(java.io.InputStream input)
         throws java.io.IOException {
       return com.google.protobuf.GeneratedMessageV3
           .parseWithIOException(PARSER, input);
     }
-    public static tukano.impl.grpc.generated_java.BlobsProtoBuf.ServerDonwloadArgs parseFrom(
+    public static tukano.impl.grpc.generated_java.BlobsProtoBuf.ServerDownloadArgs parseFrom(
         java.io.InputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
       return com.google.protobuf.GeneratedMessageV3
           .parseWithIOException(PARSER, input, extensionRegistry);
     }
-    public static tukano.impl.grpc.generated_java.BlobsProtoBuf.ServerDonwloadArgs parseDelimitedFrom(java.io.InputStream input)
+    public static tukano.impl.grpc.generated_java.BlobsProtoBuf.ServerDownloadArgs parseDelimitedFrom(java.io.InputStream input)
         throws java.io.IOException {
       return com.google.protobuf.GeneratedMessageV3
           .parseDelimitedWithIOException(PARSER, input);
     }
-    public static tukano.impl.grpc.generated_java.BlobsProtoBuf.ServerDonwloadArgs parseDelimitedFrom(
+    public static tukano.impl.grpc.generated_java.BlobsProtoBuf.ServerDownloadArgs parseDelimitedFrom(
         java.io.InputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
       return com.google.protobuf.GeneratedMessageV3
           .parseDelimitedWithIOException(PARSER, input, extensionRegistry);
     }
-    public static tukano.impl.grpc.generated_java.BlobsProtoBuf.ServerDonwloadArgs parseFrom(
+    public static tukano.impl.grpc.generated_java.BlobsProtoBuf.ServerDownloadArgs parseFrom(
         com.google.protobuf.CodedInputStream input)
         throws java.io.IOException {
       return com.google.protobuf.GeneratedMessageV3
           .parseWithIOException(PARSER, input);
     }
-    public static tukano.impl.grpc.generated_java.BlobsProtoBuf.ServerDonwloadArgs parseFrom(
+    public static tukano.impl.grpc.generated_java.BlobsProtoBuf.ServerDownloadArgs parseFrom(
         com.google.protobuf.CodedInputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
@@ -3628,7 +3628,7 @@ public final class BlobsProtoBuf {
     public static Builder newBuilder() {
       return DEFAULT_INSTANCE.toBuilder();
     }
-    public static Builder newBuilder(tukano.impl.grpc.generated_java.BlobsProtoBuf.ServerDonwloadArgs prototype) {
+    public static Builder newBuilder(tukano.impl.grpc.generated_java.BlobsProtoBuf.ServerDownloadArgs prototype) {
       return DEFAULT_INSTANCE.toBuilder().mergeFrom(prototype);
     }
     @java.lang.Override
@@ -3644,26 +3644,26 @@ public final class BlobsProtoBuf {
       return builder;
     }
     /**
-     * Protobuf type {@code ServerDonwloadArgs}
+     * Protobuf type {@code ServerDownloadArgs}
      */
     public static final class Builder extends
         com.google.protobuf.GeneratedMessageV3.Builder<Builder> implements
-        // @@protoc_insertion_point(builder_implements:ServerDonwloadArgs)
-        tukano.impl.grpc.generated_java.BlobsProtoBuf.ServerDonwloadArgsOrBuilder {
+        // @@protoc_insertion_point(builder_implements:ServerDownloadArgs)
+        tukano.impl.grpc.generated_java.BlobsProtoBuf.ServerDownloadArgsOrBuilder {
       public static final com.google.protobuf.Descriptors.Descriptor
           getDescriptor() {
-        return tukano.impl.grpc.generated_java.BlobsProtoBuf.internal_static_ServerDonwloadArgs_descriptor;
+        return tukano.impl.grpc.generated_java.BlobsProtoBuf.internal_static_ServerDownloadArgs_descriptor;
       }
 
       @java.lang.Override
       protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
           internalGetFieldAccessorTable() {
-        return tukano.impl.grpc.generated_java.BlobsProtoBuf.internal_static_ServerDonwloadArgs_fieldAccessorTable
+        return tukano.impl.grpc.generated_java.BlobsProtoBuf.internal_static_ServerDownloadArgs_fieldAccessorTable
             .ensureFieldAccessorsInitialized(
-                tukano.impl.grpc.generated_java.BlobsProtoBuf.ServerDonwloadArgs.class, tukano.impl.grpc.generated_java.BlobsProtoBuf.ServerDonwloadArgs.Builder.class);
+                tukano.impl.grpc.generated_java.BlobsProtoBuf.ServerDownloadArgs.class, tukano.impl.grpc.generated_java.BlobsProtoBuf.ServerDownloadArgs.Builder.class);
       }
 
-      // Construct using tukano.impl.grpc.generated_java.BlobsProtoBuf.ServerDonwloadArgs.newBuilder()
+      // Construct using tukano.impl.grpc.generated_java.BlobsProtoBuf.ServerDownloadArgs.newBuilder()
       private Builder() {
         maybeForceBuilderInitialization();
       }
@@ -3691,17 +3691,17 @@ public final class BlobsProtoBuf {
       @java.lang.Override
       public com.google.protobuf.Descriptors.Descriptor
           getDescriptorForType() {
-        return tukano.impl.grpc.generated_java.BlobsProtoBuf.internal_static_ServerDonwloadArgs_descriptor;
+        return tukano.impl.grpc.generated_java.BlobsProtoBuf.internal_static_ServerDownloadArgs_descriptor;
       }
 
       @java.lang.Override
-      public tukano.impl.grpc.generated_java.BlobsProtoBuf.ServerDonwloadArgs getDefaultInstanceForType() {
-        return tukano.impl.grpc.generated_java.BlobsProtoBuf.ServerDonwloadArgs.getDefaultInstance();
+      public tukano.impl.grpc.generated_java.BlobsProtoBuf.ServerDownloadArgs getDefaultInstanceForType() {
+        return tukano.impl.grpc.generated_java.BlobsProtoBuf.ServerDownloadArgs.getDefaultInstance();
       }
 
       @java.lang.Override
-      public tukano.impl.grpc.generated_java.BlobsProtoBuf.ServerDonwloadArgs build() {
-        tukano.impl.grpc.generated_java.BlobsProtoBuf.ServerDonwloadArgs result = buildPartial();
+      public tukano.impl.grpc.generated_java.BlobsProtoBuf.ServerDownloadArgs build() {
+        tukano.impl.grpc.generated_java.BlobsProtoBuf.ServerDownloadArgs result = buildPartial();
         if (!result.isInitialized()) {
           throw newUninitializedMessageException(result);
         }
@@ -3709,8 +3709,8 @@ public final class BlobsProtoBuf {
       }
 
       @java.lang.Override
-      public tukano.impl.grpc.generated_java.BlobsProtoBuf.ServerDonwloadArgs buildPartial() {
-        tukano.impl.grpc.generated_java.BlobsProtoBuf.ServerDonwloadArgs result = new tukano.impl.grpc.generated_java.BlobsProtoBuf.ServerDonwloadArgs(this);
+      public tukano.impl.grpc.generated_java.BlobsProtoBuf.ServerDownloadArgs buildPartial() {
+        tukano.impl.grpc.generated_java.BlobsProtoBuf.ServerDownloadArgs result = new tukano.impl.grpc.generated_java.BlobsProtoBuf.ServerDownloadArgs(this);
         result.blobId_ = blobId_;
         result.token_ = token_;
         onBuilt();
@@ -3751,16 +3751,16 @@ public final class BlobsProtoBuf {
       }
       @java.lang.Override
       public Builder mergeFrom(com.google.protobuf.Message other) {
-        if (other instanceof tukano.impl.grpc.generated_java.BlobsProtoBuf.ServerDonwloadArgs) {
-          return mergeFrom((tukano.impl.grpc.generated_java.BlobsProtoBuf.ServerDonwloadArgs)other);
+        if (other instanceof tukano.impl.grpc.generated_java.BlobsProtoBuf.ServerDownloadArgs) {
+          return mergeFrom((tukano.impl.grpc.generated_java.BlobsProtoBuf.ServerDownloadArgs)other);
         } else {
           super.mergeFrom(other);
           return this;
         }
       }
 
-      public Builder mergeFrom(tukano.impl.grpc.generated_java.BlobsProtoBuf.ServerDonwloadArgs other) {
-        if (other == tukano.impl.grpc.generated_java.BlobsProtoBuf.ServerDonwloadArgs.getDefaultInstance()) return this;
+      public Builder mergeFrom(tukano.impl.grpc.generated_java.BlobsProtoBuf.ServerDownloadArgs other) {
+        if (other == tukano.impl.grpc.generated_java.BlobsProtoBuf.ServerDownloadArgs.getDefaultInstance()) return this;
         if (!other.getBlobId().isEmpty()) {
           blobId_ = other.blobId_;
           onChanged();
@@ -3784,11 +3784,11 @@ public final class BlobsProtoBuf {
           com.google.protobuf.CodedInputStream input,
           com.google.protobuf.ExtensionRegistryLite extensionRegistry)
           throws java.io.IOException {
-        tukano.impl.grpc.generated_java.BlobsProtoBuf.ServerDonwloadArgs parsedMessage = null;
+        tukano.impl.grpc.generated_java.BlobsProtoBuf.ServerDownloadArgs parsedMessage = null;
         try {
           parsedMessage = PARSER.parsePartialFrom(input, extensionRegistry);
         } catch (com.google.protobuf.InvalidProtocolBufferException e) {
-          parsedMessage = (tukano.impl.grpc.generated_java.BlobsProtoBuf.ServerDonwloadArgs) e.getUnfinishedMessage();
+          parsedMessage = (tukano.impl.grpc.generated_java.BlobsProtoBuf.ServerDownloadArgs) e.getUnfinishedMessage();
           throw e.unwrapIOException();
         } finally {
           if (parsedMessage != null) {
@@ -3962,41 +3962,41 @@ public final class BlobsProtoBuf {
       }
 
 
-      // @@protoc_insertion_point(builder_scope:ServerDonwloadArgs)
+      // @@protoc_insertion_point(builder_scope:ServerDownloadArgs)
     }
 
-    // @@protoc_insertion_point(class_scope:ServerDonwloadArgs)
-    private static final tukano.impl.grpc.generated_java.BlobsProtoBuf.ServerDonwloadArgs DEFAULT_INSTANCE;
+    // @@protoc_insertion_point(class_scope:ServerDownloadArgs)
+    private static final tukano.impl.grpc.generated_java.BlobsProtoBuf.ServerDownloadArgs DEFAULT_INSTANCE;
     static {
-      DEFAULT_INSTANCE = new tukano.impl.grpc.generated_java.BlobsProtoBuf.ServerDonwloadArgs();
+      DEFAULT_INSTANCE = new tukano.impl.grpc.generated_java.BlobsProtoBuf.ServerDownloadArgs();
     }
 
-    public static tukano.impl.grpc.generated_java.BlobsProtoBuf.ServerDonwloadArgs getDefaultInstance() {
+    public static tukano.impl.grpc.generated_java.BlobsProtoBuf.ServerDownloadArgs getDefaultInstance() {
       return DEFAULT_INSTANCE;
     }
 
-    private static final com.google.protobuf.Parser<ServerDonwloadArgs>
-        PARSER = new com.google.protobuf.AbstractParser<ServerDonwloadArgs>() {
+    private static final com.google.protobuf.Parser<ServerDownloadArgs>
+        PARSER = new com.google.protobuf.AbstractParser<ServerDownloadArgs>() {
       @java.lang.Override
-      public ServerDonwloadArgs parsePartialFrom(
+      public ServerDownloadArgs parsePartialFrom(
           com.google.protobuf.CodedInputStream input,
           com.google.protobuf.ExtensionRegistryLite extensionRegistry)
           throws com.google.protobuf.InvalidProtocolBufferException {
-        return new ServerDonwloadArgs(input, extensionRegistry);
+        return new ServerDownloadArgs(input, extensionRegistry);
       }
     };
 
-    public static com.google.protobuf.Parser<ServerDonwloadArgs> parser() {
+    public static com.google.protobuf.Parser<ServerDownloadArgs> parser() {
       return PARSER;
     }
 
     @java.lang.Override
-    public com.google.protobuf.Parser<ServerDonwloadArgs> getParserForType() {
+    public com.google.protobuf.Parser<ServerDownloadArgs> getParserForType() {
       return PARSER;
     }
 
     @java.lang.Override
-    public tukano.impl.grpc.generated_java.BlobsProtoBuf.ServerDonwloadArgs getDefaultInstanceForType() {
+    public tukano.impl.grpc.generated_java.BlobsProtoBuf.ServerDownloadArgs getDefaultInstanceForType() {
       return DEFAULT_INSTANCE;
     }
 
@@ -5741,10 +5741,10 @@ public final class BlobsProtoBuf {
     com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
       internal_static_DeleteResult_fieldAccessorTable;
   private static final com.google.protobuf.Descriptors.Descriptor
-    internal_static_ServerDonwloadArgs_descriptor;
+    internal_static_ServerDownloadArgs_descriptor;
   private static final 
     com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
-      internal_static_ServerDonwloadArgs_fieldAccessorTable;
+      internal_static_ServerDownloadArgs_fieldAccessorTable;
   private static final com.google.protobuf.Descriptors.Descriptor
     internal_static_ServerUploadArgs_descriptor;
   private static final 
@@ -5774,16 +5774,19 @@ public final class BlobsProtoBuf {
       "\014UploadResult\"\036\n\014DownloadArgs\022\016\n\006blobId\030" +
       "\001 \001(\t\"\037\n\016DownloadResult\022\r\n\005chunk\030\001 \001(\014\"+" +
       "\n\nDeleteArgs\022\016\n\006blobId\030\001 \001(\t\022\r\n\005token\030\002 " +
-      "\001(\t\"\016\n\014DeleteResult\"3\n\022ServerDonwloadArg" +
+      "\001(\t\"\016\n\014DeleteResult\"3\n\022ServerDownloadArg" +
       "s\022\016\n\006blobId\030\001 \001(\t\022\r\n\005token\030\002 \001(\t\"?\n\020Serv" +
       "erUploadArgs\022\016\n\006blobId\030\001 \001(\t\022\014\n\004data\030\002 \001" +
       "(\014\022\r\n\005token\030\003 \001(\t\"%\n\024ServerDownloadResul" +
-      "t\022\r\n\005chunk\030\001 \001(\014\"\024\n\022ServerUploadResult2\207" +
-      "\001\n\005Blobs\022&\n\006upload\022\013.UploadArgs\032\r.Upload" +
+      "t\022\r\n\005chunk\030\001 \001(\014\"\024\n\022ServerUploadResult2\203" +
+      "\002\n\005Blobs\022&\n\006upload\022\013.UploadArgs\032\r.Upload" +
       "Result\"\000\022.\n\010download\022\r.DownloadArgs\032\017.Do" +
       "wnloadResult\"\0000\001\022&\n\006delete\022\013.DeleteArgs\032" +
-      "\r.DeleteResult\"\000B0\n\037tukano.impl.grpc.gen" +
-      "erated_javaB\rBlobsProtoBufb\006proto3"
+      "\r.DeleteResult\"\000\022@\n\016serverDownload\022\023.Ser" +
+      "verDownloadArgs\032\025.ServerDownloadResult\"\000" +
+      "0\001\0228\n\014serverUpload\022\021.ServerUploadArgs\032\023." +
+      "ServerUploadResult\"\000B0\n\037tukano.impl.grpc" +
+      ".generated_javaB\rBlobsProtoBufb\006proto3"
     };
     descriptor = com.google.protobuf.Descriptors.FileDescriptor
       .internalBuildGeneratedFileFrom(descriptorData,
@@ -5825,11 +5828,11 @@ public final class BlobsProtoBuf {
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_DeleteResult_descriptor,
         new java.lang.String[] { });
-    internal_static_ServerDonwloadArgs_descriptor =
+    internal_static_ServerDownloadArgs_descriptor =
       getDescriptor().getMessageTypes().get(6);
-    internal_static_ServerDonwloadArgs_fieldAccessorTable = new
+    internal_static_ServerDownloadArgs_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
-        internal_static_ServerDonwloadArgs_descriptor,
+        internal_static_ServerDownloadArgs_descriptor,
         new java.lang.String[] { "BlobId", "Token", });
     internal_static_ServerUploadArgs_descriptor =
       getDescriptor().getMessageTypes().get(7);

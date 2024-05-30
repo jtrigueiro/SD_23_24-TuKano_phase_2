@@ -25,6 +25,7 @@ public class GrpcShortsClient extends GrpcClient implements Shorts {
         return toJavaResult(() -> {
             stub.deleteUserShorts(DeleteUserShortsArgs.newBuilder()
                     .setUserId(userId)
+                    .setToken(token)
                     .build());
             return null;
         });
