@@ -1,5 +1,6 @@
 package tukano.clients.rest;
 
+import java.net.URI;
 import java.util.function.Supplier;
 
 import org.glassfish.jersey.client.ClientConfig;
@@ -10,6 +11,7 @@ import jakarta.ws.rs.core.Response;
 import jakarta.ws.rs.core.GenericType;
 import jakarta.ws.rs.ProcessingException;
 import jakarta.ws.rs.client.ClientBuilder;
+import jakarta.ws.rs.client.WebTarget;
 
 import tukano.utils.Sleep;
 import tukano.api.java.Result;
@@ -23,14 +25,17 @@ public class RestClient {
 
 	protected Client client;
 	protected ClientConfig config;
+	protected WebTarget target;
 
-	public RestClient() {
+	public RestClient(URI serverURI, String path) {
 		this.config = new ClientConfig();
 
 		config.property(ClientProperties.READ_TIMEOUT, READ_TIMEOUT);
 		config.property(ClientProperties.CONNECT_TIMEOUT, CONNECT_TIMEOUT);
 
 		this.client = ClientBuilder.newClient(config);
+
+		target = client.target(serverURI).path(path);
 	}
 
 	protected <T> Result<T> reTry(Supplier<Result<T>> func) {

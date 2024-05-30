@@ -9,16 +9,11 @@ import tukano.api.java.Result;
 import tukano.api.java.Shorts;
 import tukano.api.rest.RestShorts;
 
-import jakarta.ws.rs.client.WebTarget;
-
 
 public class RestShortsClient extends RestClient implements Shorts {
 
-    final WebTarget target;
-
     public RestShortsClient(URI serverURI) {
-        super();
-        target = client.target(serverURI).path(RestShorts.PATH);
+        super(serverURI, RestShorts.PATH);
     }
 
     public Result<Void> clt_deleteUserShorts(String userId) {

@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import tukano.api.User;
+import tukano.utils.Args;
+import tukano.utils.Token;
 import tukano.api.java.Users;
 import tukano.api.java.Result;
 import tukano.api.java.Shorts;
@@ -15,7 +17,9 @@ public class UsersServer implements Users {
 	private static String userByUserId = "SELECT u FROM User u WHERE u.userId = '%s'";
 	private static String allUsers = "SELECT u FROM User u";
 
-	public UsersServer() {}
+	public UsersServer() {
+		Token.set( Args.valueOf("-token", ""));
+	}
 
 	@Override
 	public Result<String> createUser(User user) {

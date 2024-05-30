@@ -3,20 +3,18 @@ package tukano.servers.rest;
 import java.util.List;
 
 import jakarta.inject.Singleton;
-import jakarta.ws.rs.ext.Provider;
 import tukano.api.Short;
 import tukano.api.java.Shorts;
 import tukano.api.rest.RestShorts;
 import tukano.servers.java.ShortsServer;
 
 @Singleton
-@Provider
 public class RestShortsResource extends RestResource implements RestShorts {
 
     final Shorts impl;
 
-    public RestShortsResource(String privateKey) {
-        this.impl = new ShortsServer(privateKey);
+    public RestShortsResource() {
+        this.impl = new ShortsServer();
     }
 
     @Override

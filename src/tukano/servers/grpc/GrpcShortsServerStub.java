@@ -41,8 +41,8 @@ public class GrpcShortsServerStub implements ShortsGrpc.AsyncService, BindableSe
 
     Shorts impl;
 
-    public GrpcShortsServerStub(String privateKey) {
-        this.impl = new ShortsServer(privateKey);
+    public GrpcShortsServerStub() {
+        this.impl = new ShortsServer();
     }
 
     @Override

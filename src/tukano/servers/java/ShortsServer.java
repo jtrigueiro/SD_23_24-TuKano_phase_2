@@ -13,7 +13,9 @@ import java.util.Comparator;
 import tukano.api.User;
 import tukano.api.Likes;
 import tukano.api.Short;
+import tukano.utils.Args;
 import tukano.api.Follows;
+import tukano.utils.Token;
 import tukano.api.java.Users;
 import tukano.api.java.Blobs;
 import tukano.api.rest.RestBlobs;
@@ -22,7 +24,6 @@ import tukano.api.java.Shorts;
 import tukano.utils.Discovery;
 import tukano.utils.Hibernate;
 import tukano.clients.ClientFactory;
-import tukano.impl.ExtendedBlobs;
 
 public class ShortsServer implements Shorts {
 
@@ -44,8 +45,10 @@ public class ShortsServer implements Shorts {
 
     private final String privateKey;
 
-    public ShortsServer(String privateKey) {
-        this.privateKey = privateKey;
+    public ShortsServer() {
+        Token.set( Args.valueOf("-token", ""));
+        this.privateKey = Args.valueOf("-secret", "");
+
         replicationCheck();
     }
 
@@ -79,24 +82,22 @@ public class ShortsServer implements Shorts {
 
     private void replicate(URI blobURI) { // FORMAT = HTTPS://HOSTNAME:PORT/REST
         List<Short> shorts = Hibernate.getInstance().jpql("SELECT s FROM Short s", Short.class);
-        Map<URI, ExtendedBlobs> clients = new ConcurrentHashMap<>();
+        Map<URI, Blobs> clients = new ConcurrentHashMap<>();
 
         // Inicializar os clientes
         for (URI uri : blobLoad.keySet())
             clients.put(uri, ClientFactory.getBlobsClient(uri));
 
         for (Short s : shorts) {
-            Hibernate.getInstance().jpql(String.format(shortByShortId, s.getBlobUrl()), Short.class);
+            
             if (s.getBlobUrl().contains(blobURI.toString())) {
-                Hibernate.getInstance().jpql(String.format(shortsByOwnerId, s.getBlobUrl()), Short.class);
+                
                 for (String url : getShortenBlobURL(s)) { // [BLOBAPAGADO, BLOBDOWNLOAD] OU [BLOBORIGEM, BLOBAPAGADO]
                     if (!blobURI.toString().equals(url)) {
-                        long timestamp = System.currentTimeMillis();
+                        //long timestamp = System.currentTimeMillis();
                         // Bytes to upload in different blob
-                        Result<byte[]> bytes = clients.get(URI.create(url)).download(s.getShortId(),
-                                String.valueOf(timestamp),
-                                org.apache.commons.codec.digest.DigestUtils
-                                        .sha256Hex(url + "/blobs/" + s.getShortId() + timestamp + privateKey));
+                        Result<byte[]> bytes = clients.get(URI.create(url)).download(s.getShortId());
+                                //String.valueOf(timestamp), org.apache.commons.codec.digest.DigestUtils.sha256Hex(url + "/blobs/" + s.getShortId() + timestamp + privateKey));
 
                         if (bytes.isOK()) {
                             for (URI uri : clients.keySet()) {
@@ -417,8 +418,8 @@ public class ShortsServer implements Shorts {
     }
 
     private String[] minLoad() {
-        int i = Math.min(2, blobLoad.size());
-        String[] minLoad = new String[i];
+        //int i = Math.min(2, blobLoad.size());
+        String[] minLoad = new String[2];
 
         int min = Integer.MAX_VALUE;
         for (Map.Entry<URI, Integer> entry : blobLoad.entrySet()) {
@@ -428,7 +429,7 @@ public class ShortsServer implements Shorts {
             }
         }
 
-        if (i == 2) {
+        //if (i == 2) {
             min = Integer.MAX_VALUE;
             for (Map.Entry<URI, Integer> entry : blobLoad.entrySet()) {
                 if (entry.getValue() < min && !entry.getKey().toString().equals(minLoad[0])) {
@@ -436,7 +437,7 @@ public class ShortsServer implements Shorts {
                     minLoad[1] = entry.getKey().toString();
                 }
             }
-        }
+        //}
 
         return minLoad;
     }

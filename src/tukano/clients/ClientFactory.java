@@ -9,7 +9,6 @@ import tukano.utils.Discovery;
 import tukano.clients.rest.RestBlobsClient;
 import tukano.clients.rest.RestShortsClient;
 import tukano.clients.rest.RestUsersClient;
-import tukano.impl.ExtendedBlobs;
 import tukano.clients.grpc.GrpcBlobsClient;
 import tukano.clients.grpc.GrpcShortsClient;
 import tukano.clients.grpc.GrpcUsersClient;
@@ -34,7 +33,7 @@ public class ClientFactory {
          return new GrpcShortsClient(serverURI);
    }
 
-   public static ExtendedBlobs getBlobsClient(URI serverURI) {
+   public static Blobs getBlobsClient(URI serverURI) {
 
       if (serverURI.toString().endsWith("rest"))
          return new RestBlobsClient(serverURI);

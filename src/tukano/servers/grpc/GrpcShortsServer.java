@@ -3,12 +3,13 @@ package tukano.servers.grpc;
 import java.io.FileInputStream;
 import java.net.InetAddress;
 import java.security.KeyStore;
+import java.util.logging.Logger;
 
 import javax.net.ssl.KeyManagerFactory;
 import io.grpc.netty.GrpcSslContexts;
 import io.grpc.netty.NettyServerBuilder;
 import io.netty.handler.ssl.SslContextBuilder;
-
+import tukano.utils.Args;
 import tukano.utils.Discovery;
 
 public class GrpcShortsServer {
@@ -16,9 +17,10 @@ public class GrpcShortsServer {
     public static final String SERVICE = "shorts";
     private static final String SERVER_URI_FMT = "grpc://%s:%s%s";
     private static final String GRPC_CTX = "/gprc";
+    private static Logger Log = Logger.getLogger(GrpcShortsServer.class.getName());
 
     public static void main(String[] args) throws Exception {
-        String privateKey = args[0];
+        Args.use(args);
 
         var keyStore = System.getProperty("javax.net.ssl.keyStore");
         var keyStorePassword = System.getProperty("javax.net.ssl.keyStorePassword");
@@ -31,7 +33,7 @@ public class GrpcShortsServer {
         var keyManagerFactory = KeyManagerFactory.getInstance(KeyManagerFactory.getDefaultAlgorithm());
         keyManagerFactory.init(keystore, keyStorePassword.toCharArray());
 
-        var stub = new GrpcShortsServerStub(privateKey);
+        var stub = new GrpcShortsServerStub();
 
         var sslContext = GrpcSslContexts.configure(SslContextBuilder.forServer(keyManagerFactory)).build();
         var server = NettyServerBuilder.forPort(PORT).addService(stub).sslContext(sslContext).build();
@@ -39,6 +41,7 @@ public class GrpcShortsServer {
 
         Discovery discovery = Discovery.getInstance();
         discovery.announce(SERVICE, serverURI);
+        Log.info(String.format("%s gRPC Server ready @ %s\n", SERVICE, serverURI));
         server.start();
         server.awaitTermination();
     }

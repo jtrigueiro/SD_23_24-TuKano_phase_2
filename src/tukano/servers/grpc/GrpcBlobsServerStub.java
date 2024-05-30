@@ -21,8 +21,8 @@ import tukano.impl.grpc.generated_java.BlobsProtoBuf.UploadResult;
 public class GrpcBlobsServerStub implements BlobsGrpc.AsyncService, BindableService {
     final Blobs impl;
 
-    public GrpcBlobsServerStub(String privateKey, String serverURI) {
-        this.impl = new BlobServer(privateKey, serverURI);
+    public GrpcBlobsServerStub() {
+        this.impl = new BlobServer();
     }
 
     @Override

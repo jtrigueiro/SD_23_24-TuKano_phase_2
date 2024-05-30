@@ -3,11 +3,13 @@ package tukano.servers.grpc;
 import java.io.FileInputStream;
 import java.net.InetAddress;
 import java.security.KeyStore;
+import java.util.logging.Logger;
 
 import javax.net.ssl.KeyManagerFactory;
 import io.grpc.netty.GrpcSslContexts;
 import io.grpc.netty.NettyServerBuilder;
 import io.netty.handler.ssl.SslContextBuilder;
+import tukano.utils.Args;
 import tukano.utils.Discovery;
 
 public class GrpcUsersServer {
@@ -15,8 +17,10 @@ public class GrpcUsersServer {
     public static final String SERVICE = "users";
     private static final String SERVER_URI_FMT = "grpc://%s:%s%s";
     private static final String GRPC_CTX = "/gprc";
+    private static Logger Log = Logger.getLogger(GrpcUsersServer.class.getName());
 
     public static void main(String[] args) throws Exception {
+        Args.use(args);
 
         var keyStore = System.getProperty("javax.net.ssl.keyStore");
         var keyStorePassword = System.getProperty("javax.net.ssl.keyStorePassword");
@@ -37,6 +41,7 @@ public class GrpcUsersServer {
 
         Discovery discovery = Discovery.getInstance();
         discovery.announce(SERVICE, serverURI);
+        Log.info(String.format("%s gRPC Server ready @ %s\n", SERVICE, serverURI));
         server.start();
         server.awaitTermination();
     }

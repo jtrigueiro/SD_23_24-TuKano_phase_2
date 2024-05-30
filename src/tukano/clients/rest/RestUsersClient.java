@@ -1,11 +1,9 @@
 package tukano.clients.rest;
 
-import java.net.URI;
-
 import java.util.List;
 
+import java.net.URI;
 import jakarta.ws.rs.client.Entity;
-import jakarta.ws.rs.client.WebTarget;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.GenericType;
 
@@ -16,11 +14,8 @@ import tukano.api.rest.RestUsers;
 
 public class RestUsersClient extends RestClient implements Users {
 
-	private final WebTarget target;
-
 	public RestUsersClient(URI serverURI) {
-		super();
-		target = client.target(serverURI).path(RestUsers.PATH);
+		super(serverURI, RestUsers.PATH);
 	}
 
 	private Result<String> clt_createUser(User user) {

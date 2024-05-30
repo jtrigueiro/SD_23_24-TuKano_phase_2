@@ -1,7 +1,5 @@
 package tukano.servers.java;
 
-import java.security.MessageDigest;
-
 import org.pac4j.scribe.builder.api.DropboxApi20;
 import com.github.scribejava.core.builder.ServiceBuilder;
 import com.github.scribejava.core.model.OAuth2AccessToken;
@@ -11,19 +9,20 @@ import com.github.scribejava.core.model.Verb;
 import com.github.scribejava.core.oauth.OAuth20Service;
 import com.google.gson.Gson;
 
-import jakarta.ws.rs.ext.Provider;
 import tukano.utils.dropbox.msgs.CreateFolderV2Args;
 import tukano.utils.dropbox.msgs.DeleteFileV2Args;
 import tukano.utils.dropbox.msgs.DownloadFileArgs;
 import tukano.utils.dropbox.msgs.UploadFileArgs;
 
+import tukano.utils.Token;
+import tukano.utils.Args;
 import tukano.api.java.Blobs;
 import tukano.api.java.Result;
 import tukano.api.java.Shorts;
 import tukano.api.rest.RestBlobs;
 import tukano.clients.ClientFactory;
 
-@Provider
+
 public class BlobProxyServer implements Blobs {
     private static final String apiKey = "b994yeq62paqye8";
     private static final String apiSecret = "8w3xrdm9bzh6veo";
@@ -47,9 +46,12 @@ public class BlobProxyServer implements Blobs {
     private final OAuth2AccessToken accessToken;
     private final String privateKey, serverURI;
 
-    public BlobProxyServer(Boolean cleanState, String privateKey, String serverURI) {
-        this.privateKey = privateKey;
-        this.serverURI = serverURI;
+    public BlobProxyServer() {
+        Token.set( Args.valueOf("-token", ""));
+        this.privateKey = Args.valueOf("-secret", "");
+        this.serverURI = Args.valueOf("-serverURI", "");
+        Boolean cleanState = Boolean.parseBoolean(Args.valueOf("-cleanState", ""));
+        
         json = new Gson();
         accessToken = new OAuth2AccessToken(accessTokenStr);
         service = new ServiceBuilder(apiKey).apiSecret(apiSecret).build(DropboxApi20.INSTANCE);

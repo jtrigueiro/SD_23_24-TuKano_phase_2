@@ -1,7 +1,6 @@
 package tukano.servers.rest;
 
 import jakarta.inject.Singleton;
-
 import tukano.api.java.Blobs;
 import tukano.api.rest.RestBlobs;
 import tukano.servers.java.BlobProxyServer;
@@ -11,8 +10,8 @@ public class RestBlobsProxyResource extends RestResource implements RestBlobs {
 
     final Blobs impl;
 
-    public RestBlobsProxyResource(boolean cleanState, String privateKey, String serverURI) {
-        this.impl = new BlobProxyServer(cleanState, privateKey, serverURI);
+    public RestBlobsProxyResource() {
+        this.impl = new BlobProxyServer();
     }
 
     @Override

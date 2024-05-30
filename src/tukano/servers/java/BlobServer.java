@@ -5,6 +5,8 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
+import tukano.utils.Token;
+import tukano.utils.Args;
 import tukano.api.java.Blobs;
 import tukano.api.java.Result;
 import tukano.api.java.Shorts;
@@ -16,9 +18,11 @@ public class BlobServer implements Blobs {
     private final Path storagePath;
     private final String privateKey, serverURI;
 
-    public BlobServer(String privateKey, String serverURI) {
-        this.privateKey = privateKey;
-        this.serverURI = serverURI;
+    public BlobServer() {
+        Token.set( Args.valueOf("-token", ""));
+        this.privateKey = Args.valueOf("-secret", "");
+        this.serverURI = Args.valueOf("-serverURI", "");
+        
         storagePath = Paths.get("").toAbsolutePath();
 
         try {

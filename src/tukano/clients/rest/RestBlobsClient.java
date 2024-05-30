@@ -1,22 +1,17 @@
 package tukano.clients.rest;
 
+import tukano.api.java.Blobs;
 import tukano.api.java.Result;
 import tukano.api.rest.RestBlobs;
-import tukano.impl.ExtendedBlobs;
-import jakarta.ws.rs.client.Entity;
 
 import java.net.URI;
-
-import jakarta.ws.rs.client.WebTarget;
+import jakarta.ws.rs.client.Entity;
 import jakarta.ws.rs.core.MediaType;
 
-public class RestBlobsClient extends RestClient implements ExtendedBlobs {
-
-    private final WebTarget target;
+public class RestBlobsClient extends RestClient implements Blobs {
 
     public RestBlobsClient(URI serverURI) {
-        super();
-        target = client.target(serverURI).path(RestBlobs.PATH);
+        super(serverURI, RestBlobs.PATH);
     }
 
     public Result<Void> clt_delete(String blobId) {
@@ -50,16 +45,6 @@ public class RestBlobsClient extends RestClient implements ExtendedBlobs {
     @Override
     public Result<Void> delete(String blobId) {
         return super.reTry(() -> clt_delete(blobId));
-    }
-
-    @Override
-    public Result<Void> upload(String blobId, byte[] bytes, String timestamp, String verifier) {
-        return super.reTry(() -> clt_upload(blobId, bytes, timestamp, verifier));
-    }
-
-    @Override
-    public Result<byte[]> download(String blobId, String timestamp, String verifier) {
-        return super.reTry(() -> clt_download(blobId, timestamp, verifier));
     }
 
     // ------------------- Unimplemented methods -------------------

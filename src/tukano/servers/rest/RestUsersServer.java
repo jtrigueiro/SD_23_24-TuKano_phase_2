@@ -1,11 +1,14 @@
 package tukano.servers.rest;
 
 import java.net.URI;
+import java.util.logging.Logger;
 import java.net.InetAddress;
 
 import org.glassfish.jersey.server.ResourceConfig;
 import org.glassfish.jersey.jdkhttp.JdkHttpServerFactory;
 import javax.net.ssl.SSLContext;
+
+import tukano.utils.Args;
 import tukano.utils.Discovery;
 
 public class RestUsersServer {
@@ -17,8 +20,11 @@ public class RestUsersServer {
 	public static final int PORT = 8080;
 	public static final String SERVICE = "users";
 	private static final String SERVER_URI_FMT = "https://%s:%s/rest";
+	private static Logger Log = Logger.getLogger(RestUsersServer.class.getName());
 
 	public static void main(String[] args) {
+
+		Args.use(args);
 
 		try {
 
@@ -31,6 +37,8 @@ public class RestUsersServer {
 
 			Discovery discovery = Discovery.getInstance();
 			discovery.announce(SERVICE, serverURI.toString());
+			Log.info(String.format("%s Rest Server ready @ %s\n", SERVICE, serverURI));
+
 
 		} catch (Exception e) {
 			e.printStackTrace();
