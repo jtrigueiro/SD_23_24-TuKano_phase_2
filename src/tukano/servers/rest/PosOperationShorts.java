@@ -7,7 +7,7 @@ import tukano.utils.Args;
 import tukano.utils.Hibernate;
 
 public class PosOperationShorts {
-    
+
     public static Result<Short> createShort(String shortId, String ownerId, String blobUrl, long timestamp, int likes) {
         Short s = new Short(shortId, ownerId, blobUrl, timestamp, likes);
         Hibernate.getInstance().persist(s);
@@ -25,7 +25,8 @@ public class PosOperationShorts {
         String[] verifiers = new String[blobs.length];
 
         for (int i = 0; i < blobs.length; i++) {
-            verifiers[i] = org.apache.commons.codec.digest.DigestUtils.sha256Hex(urls[i] + timestamp + Args.valueOf("-secret", ""));
+            verifiers[i] = org.apache.commons.codec.digest.DigestUtils
+                    .sha256Hex(urls[i] + timestamp + Args.valueOf("-secret", ""));
             urls[i] += "?verifier=" + verifiers[i] + "&timestamp=" + timestamp;
         }
 
