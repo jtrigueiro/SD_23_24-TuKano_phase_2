@@ -53,11 +53,10 @@ public class ShortsServer implements Shorts {
     }
 
     private void replicationCheck() {
-        // Inicializar o mapa de carga de blobs
+        // Initialize blobLoad
         for (URI uri : Discovery.getInstance().knownUrisOf("blobs", 1))
             blobLoad.put(uri, 0);
 
-        // Iniciar thread
         new Thread(() -> {
             while (true) {
                 try {
@@ -80,11 +79,11 @@ public class ShortsServer implements Shorts {
         }).start();
     }
 
-    private void replicate(URI blobURI) { // FORMAT = HTTPS://HOSTNAME:PORT/REST
+    private void replicate(URI blobURI) {
         List<Short> shorts = Hibernate.getInstance().jpql("SELECT s FROM Short s", Short.class);
         Map<URI, Blobs> clients = new ConcurrentHashMap<>();
 
-        // Inicializar os clientes
+        // Initialize clients
         for (URI uri : blobLoad.keySet())
             clients.put(uri, ClientFactory.getBlobsClient(uri));
 
@@ -92,7 +91,7 @@ public class ShortsServer implements Shorts {
 
             if (s.getBlobUrl().contains(blobURI.toString())) {
 
-                for (String url : getShortenBlobURL(s)) { // [BLOBAPAGADO, BLOBDOWNLOAD] OU [BLOBORIGEM, BLOBAPAGADO]
+                for (String url : getShortenBlobURL(s)) {
                     if (!blobURI.toString().equals(url)) {
 
                         Result<byte[]> bytes = clients.get(URI.create(url)).download(s.getShortId(), Token.get());
@@ -100,17 +99,17 @@ public class ShortsServer implements Shorts {
                         if (bytes.isOK()) {
                             for (URI uri : clients.keySet()) {
 
-                                // Se for diferente do blob apagado e do blob de origem
+                                // Verify if is a different blob
                                 if (!uri.toString().equals(url) && !uri.toString().equals(blobURI.toString())) {
 
                                     Result<Void> upload = clients.get(uri).upload(s.getShortId(), bytes.value(),
                                             Token.get());
 
                                     if (upload.isOK()) {
-                                        // Atualizar a carga do blob
+                                        // Update blobLoad
                                         blobLoad.put(uri, blobLoad.get(uri) + 1);
 
-                                        // Atualizar o url do short
+                                        // Update blob URL
                                         String newUrl = url + RestBlobs.PATH + "/" + s.getShortId() + "|"
                                                 + uri.toString() + RestBlobs.PATH + "/" + s.getShortId();
                                         s.setBlobUrl(newUrl);
@@ -118,7 +117,7 @@ public class ShortsServer implements Shorts {
                                         break;
                                     }
                                 }
-                            } // Saida do break
+                            }
                         }
                     }
                 }
@@ -136,14 +135,13 @@ public class ShortsServer implements Shorts {
             return Result.error(uCheck.error());
 
         String[] blobs = minLoad();
-        Short s = new Short(userId, blobs); // blobs FORMAT: https://hostname:port/rest/blobs/blobID ou
-                                            // grpc://hostname:port/grpc/blobs/blobID
+        Short s = new Short(userId, blobs);
 
-        // Atualizar a carga do blob
+        // Update blobLoad
         for (int i = 0; i < blobs.length; i++)
             blobLoad.put(URI.create(blobs[i]), blobLoad.get(URI.create(blobs[i])) + 1);
 
-        Hibernate.getInstance().persist(s); // URL1?verifier=xxxxx&timestamp=now|URL2?verifier=yyyyy&timestamp=now
+        Hibernate.getInstance().persist(s);
 
         for (int i = 0; i < blobs.length; i++)
             blobs[i] += RestBlobs.PATH + "/" + s.getShortId();
@@ -178,7 +176,7 @@ public class ShortsServer implements Shorts {
             if (!deleteBlob.isOK() && !deleteBlob.error().equals(Result.ErrorCode.NOT_FOUND))
                 return Result.error(deleteBlob.error());
 
-            // Atualizar a carga do blob
+            // Update blobLoad
             blobLoad.put(URI.create(url), blobLoad.get(URI.create(url)) - 1);
         }
 

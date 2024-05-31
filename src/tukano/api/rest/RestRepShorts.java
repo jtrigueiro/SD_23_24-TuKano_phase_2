@@ -16,7 +16,7 @@ import tukano.api.Short;
 
 /**
  * 
- * Interface for the Shorts service.
+ * Interface for the Replicated Shorts service.
  * 
  * This service allows existing users to create or delete short videos.
  * Users can follow other users to gain access to their short videos.

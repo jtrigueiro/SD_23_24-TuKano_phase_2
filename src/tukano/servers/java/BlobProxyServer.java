@@ -93,7 +93,7 @@ public class BlobProxyServer implements Blobs {
 
             try {
                 Response r = service.execute(uploadFile);
-                if (r.getCode() != HTTP_SUCCESS)// falhas na ligacao com a dropbox rebentam aqui?
+                if (r.getCode() != HTTP_SUCCESS)
                     return Result.error(Result.ErrorCode.CONFLICT);
             } catch (Exception e) {
                 return Result.error(Result.ErrorCode.CONFLICT);

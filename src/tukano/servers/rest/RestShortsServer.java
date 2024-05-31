@@ -22,9 +22,10 @@ public class RestShortsServer {
 	private static final String SERVER_URI_FMT = "https://%s:%s/rest";
 	private static Logger Log = Logger.getLogger(RestShortsServer.class.getName());
 
-	public static void main(String[] args) {	// indice -token token -secret secret
+	public static void main(String[] args) {
+		Args.use(args);
+		
 		try {
-			Args.use(args);
 
 			ResourceConfig config = new ResourceConfig();
 			config.register(RestShortsResource.class);

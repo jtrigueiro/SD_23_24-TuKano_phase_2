@@ -23,7 +23,6 @@ public class RestUsersServer {
 	private static Logger Log = Logger.getLogger(RestUsersServer.class.getName());
 
 	public static void main(String[] args) {
-
 		Args.use(args);
 
 		try {

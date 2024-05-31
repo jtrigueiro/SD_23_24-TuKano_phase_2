@@ -26,8 +26,19 @@ public class RestShortsRepResource extends RestResource implements RestRepShorts
 	final Shorts impl;
 
 	static final String FROM_BEGINNING = "earliest";
-	static final String TOPIC = "topic";
+	static final String TOPIC = "single_partition_topic";
 	static final String KAFKA_BROKERS = "kafka:8080";
+
+	private static final String CREATESHORT = "createShort";
+	private static final String DELETESHORT = "deleteShort";
+	private static final String GETSHORT = "getShort";
+	private static final String GETSHORTS = "getShorts";
+	private static final String FOLLOW = "follow";
+	private static final String FOLLOWERS = "followers";
+	private static final String LIKE = "like";
+	private static final String LIKES = "likes";
+	private static final String GETFEED = "getFeed";
+	private static final String DELETEUSERSHORTS = "deleteUserShorts";
 
 	private static Logger Log = Logger.getLogger(RestShortsRepResource.class.getName());
 
@@ -60,25 +71,25 @@ public class RestShortsRepResource extends RestResource implements RestRepShorts
             String method = r.key();
             String[] param = r.value().split(",");
             switch (method) {
-                case "createShort":
+                case CREATESHORT:
                     result = impl.createShort(param[0], param[1]); break;
-                case "deleteShort":
+                case DELETESHORT:
                     result = impl.deleteShort(param[0], param[1]); break;
-                case "getShort":
+                case GETSHORT:
                     result = impl.getShort(param[0]); break;
-                case "getShorts":
+                case GETSHORTS:
                     result = impl.getShorts(param[0]); break;
-				case "follow":
+				case FOLLOW:
 					result = impl.follow(param[0], param[1], Boolean.parseBoolean(param[2]), param[3]); break;
-                case "followers":
+                case FOLLOWERS:
                     result = impl.followers(param[0], param[1]); break;
-				case "like":
+				case LIKE:
 					result = impl.like(param[0], param[1], Boolean.parseBoolean(param[2]), param[3]); break;
-				case "likes":
+				case LIKES:
 					result = impl.likes(param[0], param[1]); break;
-				case "getFeed":
+				case GETFEED:
 					result = impl.getFeed(param[0], param[1]); break;
-				case "deleteUserShorts":
+				case DELETEUSERSHORTS:
 					result = impl.deleteUserShorts(param[0], param[1]); break;
                 default:
                     Log.severe("No such command\n");
@@ -86,7 +97,7 @@ public class RestShortsRepResource extends RestResource implements RestRepShorts
             sync.setResult(r.offset(),result);
 
         } catch (Exception e){
-            Log.severe("Exception in OnREceive function\n");
+            Log.severe("Exception in OnReceive function\n");
         }
 
 	}	
@@ -95,69 +106,69 @@ public class RestShortsRepResource extends RestResource implements RestRepShorts
 	public Short createShort(long headerVer, String userId, String password) {
 		Log.info("Received createShort; Version: "+ headerVer +")");
 		
-		var version = sender.publish(TOPIC, "createShort", userId + "," + password);
+		var version = sender.publish(TOPIC, CREATESHORT, userId + "," + password);
 		Result<Short> result = sync.waitForResult(version);
 		return super.resultOrThrow( result );
 	}
 
 	@Override
 	public void deleteShort(long headerVer, String shortId, String password) {
-		var version = sender.publish(TOPIC, "deleteShort", shortId + "," + password);
+		var version = sender.publish(TOPIC, DELETESHORT, shortId + "," + password);
 		Result<Void> result = sync.waitForResult(version);
 		super.resultOrThrow( result );
 	}
 
 	@Override
 	public Short getShort(long headerVer, String shortId) {
-		var version = sender.publish(TOPIC, "getShort", shortId);
+		var version = sender.publish(TOPIC, GETSHORT, shortId);
 		Result<Short> result = sync.waitForResult(version);
 		return super.resultOrThrow( result );
 	}
 	@Override
 	public List<String> getShorts(long headerVer, String userId) {
-		var version = sender.publish(TOPIC, "getShorts", userId);
+		var version = sender.publish(TOPIC, GETSHORTS, userId);
 		Result<List<String>> result = sync.waitForResult(version);
 		return super.resultOrThrow( result );
 	}
 
 	@Override
 	public void follow(long headerVer, String userId1, String userId2, boolean isFollowing, String password) {
-		var version = sender.publish(TOPIC, "follow", userId1 + "," + userId2 + "," + isFollowing + "," + password);
+		var version = sender.publish(TOPIC, FOLLOW, userId1 + "," + userId2 + "," + isFollowing + "," + password);
 		Result<Void> result = sync.waitForResult(version);
 		super.resultOrThrow( result );
 	}
 
 	@Override
 	public List<String> followers(long headerVer, String userId, String password) {
-		var version = sender.publish(TOPIC, "followers", userId + "," + password);
+		var version = sender.publish(TOPIC, FOLLOWERS, userId + "," + password);
 		Result<List<String>> result = sync.waitForResult(version);
 		return super.resultOrThrow( result );
 	}
 
 	@Override
 	public void like(long headerVer, String shortId, String userId, boolean isLiked, String password) {
-		var version = sender.publish(TOPIC, "like", shortId + "," + userId + "," + isLiked + "," + password);
+		var version = sender.publish(TOPIC, LIKE, shortId + "," + userId + "," + isLiked + "," + password);
 		Result<Void> result = sync.waitForResult(version);
 		super.resultOrThrow( result );
 	}
 
 	@Override
 	public List<String> likes(long headerVer, String shortId, String password) {
-		var version = sender.publish(TOPIC, "likes", shortId + "," + password);
+		var version = sender.publish(TOPIC, LIKES, shortId + "," + password);
 		Result<List<String>> result = sync.waitForResult(version);
 		return super.resultOrThrow( result );
 	}
 
 	@Override
 	public List<String> getFeed(long headerVer, String userId, String password) {
-		var version = sender.publish(TOPIC, "getFeed", userId + "," + password);
+		var version = sender.publish(TOPIC, GETFEED, userId + "," + password);
 		Result<List<String>> result = sync.waitForResult(version);
 		return super.resultOrThrow( result );
 	}
 
     @Override
     public void deleteUserShorts(long headerVer, String userId, String token) {
-        long version = sender.publish(TOPIC, "deleteUserShorts", userId + "," + token);
+        long version = sender.publish(TOPIC, DELETEUSERSHORTS, userId + "," + token);
         Result<Void> result = sync.waitForResult(version);
         super.resultOrThrow(result);
     }

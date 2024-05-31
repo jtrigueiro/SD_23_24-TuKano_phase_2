@@ -24,8 +24,9 @@ public class RestShortsRepServer {
 	}
 	
 	public static void main(String[] args) {
-        try {
-			Args.use(args);
+        Args.use(args);
+
+		try {
 
 			ResourceConfig config = new ResourceConfig();
 			config.register(new RestShortsRepResource());
