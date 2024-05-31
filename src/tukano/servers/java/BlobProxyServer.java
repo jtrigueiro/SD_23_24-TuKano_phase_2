@@ -1,6 +1,5 @@
 package tukano.servers.java;
 
-import org.hibernate.Hibernate;
 import org.pac4j.scribe.builder.api.DropboxApi20;
 import com.github.scribejava.core.builder.ServiceBuilder;
 import com.github.scribejava.core.model.OAuth2AccessToken;
