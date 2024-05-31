@@ -18,9 +18,7 @@ import tukano.utils.Token;
 import tukano.utils.Args;
 import tukano.api.java.Blobs;
 import tukano.api.java.Result;
-import tukano.api.java.Shorts;
 import tukano.api.rest.RestBlobs;
-import tukano.clients.ClientFactory;
 
 public class BlobProxyServer implements Blobs {
     private static final String apiKey = "b994yeq62paqye8";
@@ -61,13 +59,6 @@ public class BlobProxyServer implements Blobs {
 
     @Override
     public Result<Void> upload(String blobId, byte[] bytes) {
-        Shorts client = ClientFactory.getShortsClient();
-        Result<Void> bCheck = client.checkBlobId(blobId);
-
-        // Check if the blobId is verified
-        if (!bCheck.isOK())
-            return Result.error(Result.ErrorCode.FORBIDDEN);
-
         Result<byte[]> check = download(blobId);
 
         if (check.isOK()) {

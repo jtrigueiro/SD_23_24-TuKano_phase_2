@@ -134,14 +134,4 @@ public interface Shorts {
 	 *         NOT_FOUND if the blobId of a short owned by the user does not match an existing blob
 	 */
 	Result<Void> deleteUserShorts(String userId, String token);
-
-
-	/**
-	 * Checks if a given blobId exists
-	 * 
-	 * @param blobId the blobId to be checked
-	 * @return (OK,void),
-	 *         NOT_FOUND if the blobId does not match an existing blob
-	 */
-	Result<Void> checkBlobId(String blobId);
 }

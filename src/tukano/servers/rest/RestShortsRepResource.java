@@ -11,7 +11,7 @@ import jakarta.ws.rs.ext.Provider;
 import tukano.api.Short;
 import tukano.api.java.Result;
 import tukano.api.java.Shorts;
-import tukano.api.rest.RestRepShorts;
+import tukano.api.rest.RestShorts;
 import tukano.servers.java.ShortsServer;
 import tukano.utils.kafka.lib.KafkaPublisher;
 import tukano.utils.kafka.lib.KafkaSubscriber;
@@ -21,7 +21,7 @@ import tukano.utils.kafka.sync.SyncPoint;
 @Singleton
 @Provider
 @SuppressWarnings({"rawtypes", "unchecked"})
-public class RestShortsRepResource extends RestResource implements RestRepShorts, RecordProcessor {
+public class RestShortsRepResource extends RestResource implements RestShorts, RecordProcessor {
 
 	final Shorts impl;
 
@@ -31,17 +31,11 @@ public class RestShortsRepResource extends RestResource implements RestRepShorts
 
 	private static final String CREATESHORT = "createShort";
 	private static final String DELETESHORT = "deleteShort";
-	private static final String GETSHORT = "getShort";
-	private static final String GETSHORTS = "getShorts";
 	private static final String FOLLOW = "follow";
-	private static final String FOLLOWERS = "followers";
 	private static final String LIKE = "like";
-	private static final String LIKES = "likes";
-	private static final String GETFEED = "getFeed";
 	private static final String DELETEUSERSHORTS = "deleteUserShorts";
 
 	private static Logger Log = Logger.getLogger(RestShortsRepResource.class.getName());
-
 
 	final String replicaId;
 	final KafkaPublisher sender;
@@ -72,23 +66,15 @@ public class RestShortsRepResource extends RestResource implements RestRepShorts
             String[] param = r.value().split(",");
             switch (method) {
                 case CREATESHORT:
-                    result = impl.createShort(param[0], param[1]); break;
+					super.resultOrThrow( PreConditionsShorts.createShort(param[0], param[1]) );
+					resultOrThrow( PosOperationShorts.createShort(param[2], param[0], param[3], Long.parseLong(param[4]), Integer.parseInt(param[5])) );
+					break;
                 case DELETESHORT:
                     result = impl.deleteShort(param[0], param[1]); break;
-                case GETSHORT:
-                    result = impl.getShort(param[0]); break;
-                case GETSHORTS:
-                    result = impl.getShorts(param[0]); break;
 				case FOLLOW:
 					result = impl.follow(param[0], param[1], Boolean.parseBoolean(param[2]), param[3]); break;
-                case FOLLOWERS:
-                    result = impl.followers(param[0], param[1]); break;
 				case LIKE:
 					result = impl.like(param[0], param[1], Boolean.parseBoolean(param[2]), param[3]); break;
-				case LIKES:
-					result = impl.likes(param[0], param[1]); break;
-				case GETFEED:
-					result = impl.getFeed(param[0], param[1]); break;
 				case DELETEUSERSHORTS:
 					result = impl.deleteUserShorts(param[0], param[1]); break;
                 default:
@@ -105,8 +91,11 @@ public class RestShortsRepResource extends RestResource implements RestRepShorts
 	@Override
 	public Short createShort(long headerVer, String userId, String password) {
 		Log.info("Received createShort; Version: "+ headerVer +")");
+
+		Short s = impl.createShort(userId, password).value();
+		impl.deleteShort(s.getShortId(), password);
 		
-		var version = sender.publish(TOPIC, CREATESHORT, userId + "," + password);
+		var version = sender.publish(TOPIC, CREATESHORT, userId + "," + password + "," + s.getShortId() + "," + s.getBlobUrl() + "," + s.getTimestamp() + "," + s.getTotalLikes());
 		Result<Short> result = sync.waitForResult(version);
 		return super.resultOrThrow( result );
 	}
@@ -120,14 +109,13 @@ public class RestShortsRepResource extends RestResource implements RestRepShorts
 
 	@Override
 	public Short getShort(long headerVer, String shortId) {
-		var version = sender.publish(TOPIC, GETSHORT, shortId);
-		Result<Short> result = sync.waitForResult(version);
+		Result<Short> result = sync.waitForResult(headerVer);
 		return super.resultOrThrow( result );
 	}
+
 	@Override
 	public List<String> getShorts(long headerVer, String userId) {
-		var version = sender.publish(TOPIC, GETSHORTS, userId);
-		Result<List<String>> result = sync.waitForResult(version);
+		Result<List<String>> result = sync.waitForResult(headerVer);
 		return super.resultOrThrow( result );
 	}
 
@@ -140,8 +128,7 @@ public class RestShortsRepResource extends RestResource implements RestRepShorts
 
 	@Override
 	public List<String> followers(long headerVer, String userId, String password) {
-		var version = sender.publish(TOPIC, FOLLOWERS, userId + "," + password);
-		Result<List<String>> result = sync.waitForResult(version);
+		Result<List<String>> result = sync.waitForResult(headerVer);
 		return super.resultOrThrow( result );
 	}
 
@@ -154,15 +141,13 @@ public class RestShortsRepResource extends RestResource implements RestRepShorts
 
 	@Override
 	public List<String> likes(long headerVer, String shortId, String password) {
-		var version = sender.publish(TOPIC, LIKES, shortId + "," + password);
-		Result<List<String>> result = sync.waitForResult(version);
+		Result<List<String>> result = sync.waitForResult(headerVer);
 		return super.resultOrThrow( result );
 	}
 
 	@Override
 	public List<String> getFeed(long headerVer, String userId, String password) {
-		var version = sender.publish(TOPIC, GETFEED, userId + "," + password);
-		Result<List<String>> result = sync.waitForResult(version);
+		Result<List<String>> result = sync.waitForResult(headerVer);
 		return super.resultOrThrow( result );
 	}
 

@@ -26,25 +26,10 @@ public class RestShortsClient extends RestClient implements Shorts {
 				Void.class);
     }
 
-    public Result<Void> svr_checkBlobId(String blobId) {
-        return super.toJavaResult(
-                target.path(blobId)
-                        .path(RestShorts.CHECK)
-                        .request()
-                        .get(),
-                Void.class);
-    }
-    
-
     @Override
 	public Result<Void> deleteUserShorts(String userId, String token) {
 		return super.reTry(() -> svr_deleteUserShorts(userId, token));
 	}
-
-    @Override
-    public Result<Void> checkBlobId(String blobId) {
-        return super.reTry(() -> svr_checkBlobId(blobId));
-    }
 
     // ----------------- Unimplemented methods -----------------
 

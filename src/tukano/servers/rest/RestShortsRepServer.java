@@ -29,7 +29,7 @@ public class RestShortsRepServer {
 		try {
 
 			ResourceConfig config = new ResourceConfig();
-			config.register(new RestShortsRepResource());
+			config.register(new RestShortsRepResource().getClass());
 
 			String ip = InetAddress.getLocalHost().getHostName();
 			String serverURI = String.format(SERVER_URI_FMT, ip, PORT);

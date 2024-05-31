@@ -25,8 +25,6 @@ service Shorts {
 	rpc getFeed( GetFeedArgs ) returns ( GetFeedResult );
 
 	rpc deleteUserShorts( DeleteUserShortsArgs ) returns ( DeleteUserShortsResult );
-
-	rpc checkBlobId( CheckBlobIdArgs ) returns ( CheckBlobIdResult );
 }
 
 message GrpcShort {
@@ -120,9 +118,3 @@ message DeleteUserShortsArgs {
 }
 
 message DeleteUserShortsResult {}
-
-message CheckBlobIdArgs {
-	string blobId = 1;
-}
-
-message CheckBlobIdResult {}

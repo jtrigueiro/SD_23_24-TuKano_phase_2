@@ -8,7 +8,6 @@ import tukano.api.java.Result;
 import tukano.api.java.Shorts;
 import tukano.impl.grpc.generated_java.ShortsGrpc;
 import tukano.impl.grpc.generated_java.ShortsGrpc.ShortsBlockingStub;
-import tukano.impl.grpc.generated_java.ShortsProtoBuf.CheckBlobIdArgs;
 import tukano.impl.grpc.generated_java.ShortsProtoBuf.DeleteUserShortsArgs;
 
 public class GrpcShortsClient extends GrpcClient implements Shorts {
@@ -26,16 +25,6 @@ public class GrpcShortsClient extends GrpcClient implements Shorts {
             stub.deleteUserShorts(DeleteUserShortsArgs.newBuilder()
                     .setUserId(userId)
                     .setToken(token)
-                    .build());
-            return null;
-        });
-    }
-
-    @Override
-    public Result<Void> checkBlobId(String blobId) {
-        return toJavaResult(() -> {
-            stub.checkBlobId(CheckBlobIdArgs.newBuilder()
-                    .setBlobId(blobId)
                     .build());
             return null;
         });

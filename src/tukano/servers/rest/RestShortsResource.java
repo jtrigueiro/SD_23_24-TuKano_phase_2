@@ -18,58 +18,53 @@ public class RestShortsResource extends RestResource implements RestShorts {
     }
 
     @Override
-    public Short createShort(String userId, String password) {
+    public Short createShort(long version, String userId, String password) {
         return resultOrThrow(impl.createShort(userId, password));
     }
 
     @Override
-    public void deleteShort(String shortId, String password) {
+    public void deleteShort(long version, String shortId, String password) {
         resultOrThrow(impl.deleteShort(shortId, password));
     }
 
     @Override
-    public Short getShort(String shortId) {
+    public Short getShort(long version, String shortId) {
         return resultOrThrow(impl.getShort(shortId));
     }
 
     @Override
-    public List<String> getShorts(String userId) {
+    public List<String> getShorts(long version, String userId) {
         return resultOrThrow(impl.getShorts(userId));
     }
 
     @Override
-    public void follow(String userId1, String userId2, boolean isFollowing, String password) {
+    public void follow(long version, String userId1, String userId2, boolean isFollowing, String password) {
         resultOrThrow(impl.follow(userId1, userId2, isFollowing, password));
     }
 
     @Override
-    public List<String> followers(String userId, String password) {
+    public List<String> followers(long version, String userId, String password) {
         return resultOrThrow(impl.followers(userId, password));
     }
 
     @Override
-    public void like(String shortId, String userId, boolean isLiked, String password) {
+    public void like(long version, String shortId, String userId, boolean isLiked, String password) {
         resultOrThrow(impl.like(shortId, userId, isLiked, password));
     }
 
     @Override
-    public List<String> likes(String shortId, String password) {
+    public List<String> likes(long version, String shortId, String password) {
         return resultOrThrow(impl.likes(shortId, password));
     }
 
     @Override
-    public List<String> getFeed(String userId, String password) {
+    public List<String> getFeed(long version, String userId, String password) {
         return resultOrThrow(impl.getFeed(userId, password));
     }
 
     @Override
-    public void deleteUserShorts(String userId, String token) {
+    public void deleteUserShorts(long version, String userId, String token) {
         resultOrThrow(impl.deleteUserShorts(userId, token));
-    }
-
-    @Override
-    public void checkBlobId(String blobId) {
-        resultOrThrow(impl.checkBlobId(blobId));
     }
 
 }
