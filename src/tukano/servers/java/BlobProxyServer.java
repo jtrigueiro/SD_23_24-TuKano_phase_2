@@ -23,7 +23,7 @@ import tukano.api.rest.RestBlobs;
 public class BlobProxyServer implements Blobs {
     private static final String apiKey = "b994yeq62paqye8";
     private static final String apiSecret = "8w3xrdm9bzh6veo";
-    private static final String accessTokenStr = "sl.B2Qmx_y-YAppXdLbt53znRUhFS13209EUYM4tl--FNtLfa0061OprN-8AALLqZ5FTJXoVawEkBnFJu163G8cMIhsdVskxz7D0aSaR4o4J7onmmtg0-50jTb1YWbPXtGG_rdjedjMB7Tu";
+    private static final String accessTokenStr = "sl.B2Urk9gvje5V4TefzzMA2WOKmz4ELT4U7A2IxeQYYAwiIa3DMWKjVTWnHh3HBA1E0-DA5zmvIIX8-ZuKrEkJn7_f0_CV_z_DUtdu9NBjDsUpHp3WA-BKdWNe0p3BVrk399ZiBYCzKjDM";
 
     private static final String DELETE_FILE_V2_URL = "https://api.dropboxapi.com/2/files/delete_v2";
     private static final String UPLOAD_FILE_URL = "https://content.dropboxapi.com/2/files/upload";
